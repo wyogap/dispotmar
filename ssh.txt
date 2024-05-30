@@ -1,0 +1,9 @@
+·             PUBLIK IP : 103.81.62.27
+·             DOMAIN : datacenterpotmar.tnial.mil.id
+·             PRIVATE IP : 172.18.2.108
+konek ssh port: 5758
+USER ROOT : root
+   password : Dispotmar@2021#
+
+USER WHEEL : dispotmar
+   Password : 2021@Srv#

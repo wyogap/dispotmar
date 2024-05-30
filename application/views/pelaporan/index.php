@@ -1,0 +1,998 @@
+<div class="section">
+
+	<!-- Page-header opened -->
+	<div class="page-header">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="#"><i class="ti-package mr-1"></i>Pelaporan</a></li>
+			<li class="breadcrumb-item active" aria-current="page">Data Pelaporan</li>
+		</ol>
+	</div>
+	<!-- Page-header closed -->
+	<!-- row opened -->
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="card overflow-hidden">
+				<div class="card-header">
+					<h3 class="card-title">Filter</h3>
+					<div class="card-options">
+						<a href="#" class="card-options-collapse" data-toggle="card-collapse"><i
+								class="fe fe-chevron-up"></i></a>
+						<a href="#" class="card-options-fullscreen" data-toggle="card-fullscreen"><i
+								class="fe fe-maximize"></i></a>
+						<a href="#" class="card-options-remove" data-toggle="card-remove"><i class="fe fe-x"></i></a>
+					</div>
+				</div>
+				<div class="card-body">
+					<form method="GET" action="data_pelaporan">
+						<!-- <div class="row">
+							<div class="col-md-4">
+								<div class="form-group">
+									<select class="form-control select2-show-search border-bottom-0 br-md-0"
+										data-placeholder="Select">
+										<optgroup label="Kotama">
+											<option>-- Pilih Kotama --</option>
+											<option value="1">Koarmada I</option>
+											<option value="1">Koarmada II</option>
+											<option value="1">Koarmada III</option>
+										</optgroup>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<select class="form-control select2-show-search border-bottom-0 br-md-0"
+										data-placeholder="Select">
+										<optgroup label="Lantamal">
+											<option>-- Pilih Lantamal --</option>
+											<option value="1">Lantamal I Belawan</option>
+											<option value="1">Lantamal II Padang</option>
+											<option value="1">Lantamal III Jakarta</option>
+										</optgroup>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<select class="form-control select2-show-search border-bottom-0 br-md-0"
+										data-placeholder="Select">
+										<optgroup label="Satker">
+											<option>-- Pilih Satker --</option>
+											<option value="1">Lanal Nias</option>
+											<option value="1">Lanal Bengkulu</option>
+											<option value="1">Lanal Sibolga</option>
+										</optgroup>
+									</select>
+								</div>
+							</div>
+						</div> -->
+						<div class="row">
+							<!-- <div class="col-md-4">
+								<div class="form-group">
+									<select class="form-control select2-show-search border-bottom-0 br-md-0"
+										data-placeholder="Select">
+										<optgroup label="Kotama">
+											<option>-- Pilih Jenis --</option>
+											<option>Bakti Sosial</option>
+											<option>Kegiatan Keagamaan</option>
+											<option>Penanganan Bencana</option>
+										</optgroup>
+									</select>
+								</div>
+							</div> -->
+							<div class="col-md-4">
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label">Satker </label>
+									<div class="col-md-10">
+										<?php if(($this->session->userdata('role') == 'Satker')): ?>
+											<input type="hidden" class="form-control" id="hiddensatker" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
+											<select class="form-control" id="satkerPicked" name="satkerPicked" disabled>
+										<?php else: ?>
+											<select class="form-control" id="satker" name="satker" style="width:100%;">
+										<?php endif ?>
+											<option value="">Pilih Satuan Kerja</option>
+											<?php foreach($satkers as $satker): ?>
+											<option 
+												<?= $this->input->get('satker') == $satker->id_satker ? 'selected' : '' ?> 
+												value="<?= $satker->id_satker ?>" 
+												<?= ($this->session->userdata('role') == 'Satker' && $satker->id_satker == $this->session->userdata('id_satker')) ? 'selected' : '' ?>
+											>
+											<?= $satker->nama_satker ?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-4">
+								<div class="form-group row">
+									<label class="col-md-3 col-form-label">Dari</label>
+									<div class="col-md-9">
+										<input class="form-control" type="date" name="startDate"
+											value="<?= $this->input->get('startDate') ?>">
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-4">
+								<div class="form-group row">
+									<label class="col-md-3 col-form-label">Sampai</label>
+									<div class="col-md-9">
+										<input class="form-control" type="date" name="finishDate"
+											value="<?= $this->input->get('finishDate') ?>">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-2">
+								<div class="text-center">
+									<button class="btn btn-primary btn-block mt-5" type="submit">Filter</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- row closed -->
+
+
+	<!-- row opened -->
+	<div class="row">
+		<div class="col-md-12 col-lg-12">
+			<div class="card" style="overflow:auto;">
+				<div class="card-header">
+					<div class="card-title">
+						Data Pelaporan &emsp;
+						<?= $this->input->get() ? '<a href="data_pelaporan" style="color:white;" class="btn btn-sm btn-warning">Hapus Filter</a>' : '' ?>
+					</div>
+					<div class="card-options">
+						<a href="#" class="card-options-collapse" data-toggle="card-collapse"><i
+								class="fe fe-chevron-up"></i></a>
+						<a href="#" class="card-options-fullscreen" data-toggle="card-fullscreen"><i
+								class="fe fe-maximize"></i></a>
+						<a href="#" class="card-options-remove" data-toggle="card-remove"><i class="fe fe-x"></i></a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table id="example" style="table-layout: auto; width: 100%;" class="table table-striped  table-bordered key-buttons text-nowrap lowercaseCaption_DT">
+							<thead>
+								<tr>
+									<th class="text-center">Opsi</th>
+									<th style="width: 5%;" class="text-center">No</th>
+									<th class="text-center">Satker</th>
+									<th class="text-center">Jenis</th>
+									<th class="text-center">Siapa</th>
+									<th class="text-center">Apa</th>
+									<th class="text-center">Kapan</th>
+									<th class="text-center">Dimana</th>
+									<th class="text-center">Mengapa</th>
+									<th class="text-center">Bagaimana</th>
+									<th class="text-center">Created Date</th>
+									<th class="text-center">Updated By</th>
+									<th class="text-center">Last Updated</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php $no=1; foreach($reports as $report): ?>
+								<tr>
+									<td class="text-center">
+									<?php if(policy('LAPHAR','update')): ?>
+										<a class="btn btn-sm btn-default" href="<?= site_url()?>data_pelaporan/<?= encrypt($report->id_activity_sosial); ?>/show">
+											<i class="fa fa-eye"></i>	
+										</a>
+										<button onclick="editModal(`<?= encrypt($report->id_activity_sosial); ?>`)"
+											class="btn btn-sm btn-primary">
+											<i class="fa fa-pencil "></i>
+										</button>
+										
+									<?php endif ?>
+									<?php if(policy('LAPHAR','delete')): ?>
+										<button onclick="deleteConfirm(`<?= encrypt($report->id_activity_sosial); ?>`,'<?= $report->nama_jenis; ?>')" class="btn btn-sm btn-danger">
+											<i class="fa fa-trash "></i>
+										</button>
+									<?php endif ?>
+									</td>
+									<td class="text-center"><?= $no++ ?></td>
+									<td class="text-center"><?= $report->nama_satker ?></td>
+									<td class="text-center"><?= $report->nama_jenis ?></td>
+									<td class="text-center"><?= $report->who ?></td>
+									<td class="text-center"><?= $report->what ?></td>
+									<td class="text-center"><?= date('d M y',strtotime($report->when)) ?></td>
+									<td class="text-center"><?= $report->where ?></td>
+									<td class="text-center"><?= $report->why ?></td>
+									<td class="text-center"><?= $report->how ?></td>
+									<td class="text-center"><?= $report->createddate ?></td>
+									<td class="text-center"><?= $report->nama_pegawai ?></td>
+									<td class="text-center"><?= $report->LastUpdated ?></td>
+								</tr>
+								<?php endforeach?>
+							</tbody>
+						</table>
+						<br>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- row closed -->
+</div>
+
+<!-- Hapus Data-->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Apakah anda yakin?</h5>
+				<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<form id="formDelete" method="POST" action="">
+			<input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash();?>">
+			<input type="hidden" name="id" value="">
+				<div class="modal-body">
+					<span id="delete-modal-content"></span>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" type="button" data-dismiss="modal">Batal</button>
+					<button class="btn btn-danger" type="submit">Hapus</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- Edit Data -->
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document" style="margin-right:600px;">
+		<div class="modal-content" style="width:1100px;">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Edit Data Pelaporan Harian</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<form id="editForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash();?>">
+				<input type="hidden" id="id_activity_sosial" name="id_activity_sosial" value="">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-12 col-md-12">
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Jenis Pelaporan</label>
+									<div class="col-md-9">
+										<select class="form-control" id="typeEdit" name="type" style="width:100%;">
+											<option value="">Pilih Kategori</option>
+											<?php foreach($categories as $cat): ?>
+											<option value="<?= $cat->id_activity_jenis ?>"><?= $cat->nama_jenis ?>
+											</option>
+											<?php endforeach ?>
+										</select>
+										<div class="text-danger warning-type"></div>
+									</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Siapa ?</label>
+									<div class="col-md-9">
+										<input type="text" id="whoEdit" name="who" class="form-control">
+										<div class="invalid-feedback warning-who"></div>
+									</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Satuan Kerja</label>
+									<div class="col-md-9">
+										<?php if(($this->session->userdata('role') == 'Superadmin' || $this->session->userdata('role') == 'Admin Data' || $this->session->userdata('role') == 'Admin' || $this->session->userdata('role') == 'Admin Data Center')): ?>
+											<select class="form-control" id="satkerEdit" name="satker" style="width:100%;">
+										<?php else: ?>
+											<input type="hidden" class="form-control" id="hiddensatker" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
+											<select class="form-control" id="satkerPicked" name="satkerPicked" disabled>
+										<?php endif ?>
+											<option value="">Pilih Satuan Kerja</option>
+											<?php foreach($satkers as $satker): ?>
+											<option value="<?= $satker->id_satker ?>"
+												<?= ($this->session->userdata('role') == 'Satker' && $satker->id_satker == $this->session->userdata('id_satker')) ? 'selected' : '' ?>>
+												<?= $satker->nama_satker ?>
+											</option>
+											<?php endforeach ?>
+										</select>
+										<div class="text-danger warning-satker"></div>
+									</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label">Apa ?</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" id="whatEdit" name="what" value="">
+									<div class="invalid-feedback warning-what"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Kapan?</label>
+									<div class="col-md-9">
+										<input type="text" class="form-control" name="date" id="datetimepicker1" placeholder="YYYY-MM-DD HH:ii:ss">
+										<div class="invalid-feedback warning-date"></div>
+									</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label">Dimana ?</label>
+								<div class="col-md-9">
+									<select class="form-control" id="provinsiEdit" name="provinsi" style="width:100%;">
+										<option value="">Pilih Provinsi</option>
+										<?php foreach($provinsi as $prov): ?>
+										<option value="<?= $prov->id_geografi ?>"><?= $prov->nama ?></option>
+										<?php endforeach ?>
+									</select>
+									<div class="text-danger warning-provinsi"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label"></label>
+								<div class="col-md-9">
+										<select class="form-control" id="kabupatenEdit" name="kabupaten" style="width:100%;">
+											<option value="">Pilih Kabupaten</option>
+										</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label"></label>
+								<div class="col-md-9">
+										<select class="form-control" id="kecamatanEdit" name="kecamatan" style="width:100%;">
+											<option value="">Pilih Kecamatan</option>
+										</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label"></label>
+								<div class="col-md-9">
+										<select class="form-control" id="kelurahanEdit" name="kelurahan" style="width:100%;">
+											<option value="">Pilih Kelurahan</option>
+										</select>
+										<input type="text" id="flag_locationedit" name="flag_locationedit" style="display:none;" class="form-control">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label"></label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" rows="2" id="whereEdit" name="where" placeholder="Detail Alamat">
+									<div class="invalid-feedback warning-where"></div>
+									<br>
+									<div class="form-group">
+											<label class="custom-control custom-checkbox">
+												<input type="checkbox" class="custom-control-input" checked id="pinLocation">
+												<span class="custom-control-label">Pin Lokasi Saya</span>
+											</label>
+											<br>
+											<div class="map-view" style="display: block;">
+												<div class="row">
+													<div class="form-group col-md-6">
+														<label>Latitude</label>
+														<input type="text" id="latitudeEdit" name="latitude"
+															class="form-control" readonly>
+													</div>
+													<div class="form-group col-md-6">
+														<label>Longitude</label>
+														<input type="text" id="longitudeEdit" name="longitude"
+															class="form-control" readonly>
+													</div>
+												</div>
+												<div id="map" style="width:100%;height:380px;"></div>
+											</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Mengapa ?</label>
+									<div class="col-md-9">
+										<input type="text" class="form-control" rows="3" id="whyEdit" name="why">
+										<div class="invalid-feedback warning-why"></div>
+									</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Bagaimana ?</label>
+									<div class="col-md-9">
+									<input type="text" class="form-control" rows="3" id="howEdit" name="how">
+										<div class="invalid-feedback warning-how"></div>
+									</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Catatan Penting</label>
+									<div class="col-md-9">
+									<input type="text" class="form-control" rows="6" id="notesEdit" name="notes">
+									</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label">Foto</label>
+								<div class="col-md-4">
+									<input type="file" class="dropify" id="gambarEdit" name="gambarEdit">
+									<img class="img-thumbnail mb-3" id="imagePreview" src="">
+									<input type="hidden" class="form-control-file" name="oldImage" value="">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+					<button type="submit" class="btn btn-primary">Simpan</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script src="<?php echo base_url() ?>assets/js/vendors/jquery-3.2.1.min.js"></script>
+<script async="false"
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByRkCzDDjo-th8ecT72ZBN6f69RUmwt0I&callback=initMap"></script>
+<script>
+	$(document).ready(function () {
+		$("#satker").select2();
+		$("#typeEdit").select2({
+			dropdownParent: $('#editModal')
+		});
+		$("#satkerEdit").select2({
+			dropdownParent: $('#editModal')
+		});
+		$("#provinsiEdit").select2({
+			dropdownParent: $('#editModal')
+		});
+		$("#kabupatenEdit").select2({
+			dropdownParent: $('#editModal')
+		});
+		$("#kecamatanEdit").select2({
+			dropdownParent: $('#editModal')
+		});
+		$("#kelurahanEdit").select2({
+			dropdownParent: $('#editModal')
+		});
+		
+	$('input').on('keyup change', function(){
+		var name = $(this).attr('name')
+		$('input[name="'+name+'"]').removeClass('is-invalid')
+		$('.warning-'+name).html('')
+	});
+
+	$('select').on('change', function(){
+		var name = $(this).attr('name')
+		$('.warning-'+name).html('')
+	});
+
+	$('#editModal').on('hidden.bs.modal', function (e) {
+		$('input').val('');
+		$('select').find('option:selected').removeAttr('selected');
+		$('input[name="csrf_al"]').val("<?= $this->security->get_csrf_hash() ?>")
+	});
+
+	$('#editForm').submit(function () {
+		var valueSatker = '';
+
+		if($('#hiddensatker').val() == undefined)
+		{
+			valueSatker = $('#satkerEdit').val();
+		}
+		else if($('#hiddensatker').val() != undefined)
+		{
+			valueSatker =  $('#hiddensatker').val();
+		}
+
+		var formData = new FormData();
+		formData.append('csrf_al', $('input[name="csrf_al"]').val());
+		formData.append('id_activity_sosial', $('input[name="id_activity_sosial"]').val());
+		formData.append('type', $('#typeEdit').val());
+		formData.append('who', $('#whoEdit').val());
+		formData.append('satker', valueSatker);
+		formData.append('what', $('#whatEdit').val());
+		formData.append('provinsi', $('#provinsiEdit').val());
+		formData.append('kabupaten', $('#kabupatenEdit').val());
+		formData.append('kecamatan', $('#kecamatanEdit').val());
+		formData.append('kelurahan', $('#kelurahanEdit').val());
+		formData.append('where', $('#whereEdit').val());
+		formData.append('latitude', $('#latitudeEdit').val());
+		formData.append('longitude', $('#longitudeEdit').val());
+		formData.append('why', $('#whyEdit').val());
+		formData.append('how', $('#howEdit').val());
+		formData.append('notes', $('#notesEdit').val());
+		formData.append('gambar', $('#gambarEdit')[0].files[0]);
+		formData.append('date', $('#datetimepicker1').val());
+		formData.append('flag_locationedit', $('#flag_locationedit').val());
+		$.ajax({
+			type: "POST",
+			url: "form_pelaporan/update",
+			dataType: "json",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function (data) {
+				//console.log(data)
+				if (data[0].status == 0) {
+					$('input[name="csrf_al"]').val(data[0].csrf)
+					$.each(data[1], function (key, value) {
+						$('.warning-' + key).html(value)
+						$('.warning-' + key).show()
+						if ($('#' + key + 'Edit').val() == '') {
+							$('#' + key + 'Edit').addClass('is-invalid')
+						}
+					});
+				} else {
+					window.location.reload();
+				}
+			},
+			error: function(data) {
+				//alert("error")
+				console.log(data)
+			}
+		});
+		return false;
+	});
+
+	$('#provinsi').change(function(){ 
+			var id= $(this).val();
+			if (id) {
+				$.ajax({
+					url : "<?= site_url() ?>/api/getKabupaten/"+id,
+					method : "GET",
+					async : true,
+					dataType : 'json',
+					success: function(data){
+						var html = '';
+						var i;
+						html += '<option value="">Pilih Kabupaten</option>';
+						for(i=0; i<data.length; i++){
+							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+						}
+						$('#kabupaten').html(html);
+					}
+				});
+				return false;
+			} else {
+				$('#kabupaten').html('<option value="">Pilih Kabupaten</option>');
+			}
+	}); 
+
+	$('#kabupaten').change(function(){ 
+			var id= $(this).val();
+			if (id) {
+				$.ajax({
+					url : "<?= site_url() ?>/api/getKecamatan/"+id,
+					method : "GET",
+					async : true,
+					dataType : 'json',
+					success: function(data){
+						var html = '';
+						var i;
+						html += '<option value="">Pilih Kecamatan</option>';
+						for(i=0; i<data.length; i++){
+							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+						}
+						$('#kecamatan').html(html);
+					}
+				});
+				return false;
+			} else {
+				$('#kecamatan').html('<option value="">Pilih Kecamatan</option>');
+			}
+	}); 
+
+	$('#kecamatan').change(function(){ 
+			var id= $(this).val();
+			if (id) {
+				$.ajax({
+					url : "<?= site_url() ?>/api/getKelurahan/"+id,
+					method : "GET",
+					async : true,
+					dataType : 'json',
+					success: function(data){
+						var html = '';
+						var i;
+						html += '<option value="">Pilih Kelurahan</option>';
+						for(i=0; i<data.length; i++){
+							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+						}
+						$('#kelurahan').html(html);
+					}
+				});
+				return false;
+			} else {
+				$('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
+			}
+	});
+
+	$('#provinsiEdit').change(function(){ 
+			var id= $(this).val();
+			$('#flag_locationedit').val("prov");
+
+			if (id) {
+				$.ajax({
+					url : "<?= site_url() ?>/api/getKabupaten/"+id,
+					method : "GET",
+					async : true,
+					dataType : 'json',
+					success: function(data){
+						var html = '';
+						var i;
+						html += '<option value="">Pilih Kabupaten</option>';
+						for(i=0; i<data.length; i++){
+							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+						}
+						$('#kabupatenEdit').html(html);
+						$('#kecamatanEdit').html('<option value="">Pilih Kecamatan</option>');
+						$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
+					}
+				});
+				return false;
+			} else {
+				$('#kabupatenEdit').html('<option value="">Pilih Kabupaten</option>');
+			}
+	}); 
+	
+	$('#kabupatenEdit').change(function(){ 
+			var id= $(this).val();
+			if(id == '')
+			{
+				$('#flag_locationedit').val("prov");
+			}
+			else
+			{
+				$('#flag_locationedit').val("kab");
+			}
+
+			if (id) {
+				$.ajax({
+					url : "<?= site_url() ?>/api/getKecamatan/"+id,
+					method : "GET",
+					async : true,
+					dataType : 'json',
+					success: function(data){
+						var html = '';
+						var i;
+						html += '<option value="">Pilih Kecamatan</option>';
+						for(i=0; i<data.length; i++){
+							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+						}
+						$('#kecamatanEdit').html(html);
+						$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
+					}
+				});
+				return false;
+			} else {
+				$('#kecamatanEdit').html('<option value="">Pilih Kecamatan</option>');
+			}
+	}); 
+		
+	$('#kecamatanEdit').change(function(){ 
+			var id= $(this).val();
+			if(id == '')
+			{
+				$('#flag_locationedit').val("kab");
+			}
+			else
+			{
+				$('#flag_locationedit').val("kec");
+			}
+
+			if (id) {
+				$.ajax({
+					url : "<?= site_url() ?>/api/getKelurahan/"+id,
+					method : "GET",
+					async : true,
+					dataType : 'json',
+					success: function(data){
+						var html = '';
+						var i;
+						html += '<option value="">Pilih Kelurahan</option>';
+						for(i=0; i<data.length; i++){
+							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+						}
+						$('#kelurahanEdit').html(html);
+					}
+				});
+				return false;
+			} else {
+				$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
+			}
+	}); 
+	
+	$('#kelurahanEdit').change(function(){ 
+			var id= $(this).val();
+			if(id == '')
+			{
+				$('#flag_locationedit').val("kec");
+			}
+			else
+			{
+				$('#flag_locationedit').val("kel");
+			}
+	});
+
+	$('#satkerEdit').change(function(){ 
+		var id= $(this).val();
+		if (id) {
+			$.ajax({
+				url : "api/getLatLong_byIdSatker/"+id,
+				method : "GET",
+				async : true,
+				dataType : 'json',
+				success: function(data){
+					$('#latitude').val(data[0].latitude);
+					$('#longitude').val(data[0].longitude);
+					initMap(data[0].latitude, data[0].longitude, 1);
+				}
+			});
+			return false;
+		} else {
+		}
+	});
+
+	// $('#pinLocation').on('click', function () {
+	// 	$('.map-view').toggle()
+	// });
+
+	});
+</script>
+<script>
+	function deleteConfirm(id, content) {
+		$('input[name="id"]').val(id);
+		$('#delete-modal-content').html('Anda akan menghapus data <b>' + content + '</b>');
+		$('#formDelete').attr('action', '<?= site_url() ?>data_pelaporan/' + id + '/delete');
+		$('#deleteModal').modal();
+	}
+
+	function editModal(id){
+		$('#editModal').modal();
+		$.ajax({
+			type: 'ajax',
+			method: 'GET',
+			url: 'data_pelaporan/'+id,
+			data: {
+				id: id
+			},
+			dataType: 'json',
+			success: function(data){
+				//console.log(data)
+				// if(data.report.latitude == null && data.report.longitude == null)
+				// {
+				// }
+				// else
+				// {
+				// 	$('#pinLocation').prop('checked', true);
+				// 	$('.map-view').toggle()
+				// }
+				
+				$('select[name=type]').find('option:selected').removeAttr('selected');
+				$('select[name=satker]').find('option:selected').removeAttr('selected');
+				$('select[name=provinsi]').find('option:selected').removeAttr('selected');
+				$('select[name=kabupaten]').find('option:selected').removeAttr('selected');
+				$('select[name=kecamatan]').find('option:selected').removeAttr('selected');
+				$('select[name=kelurahan]').find('option:selected').removeAttr('selected');
+				$('input[name="id_activity_sosial"]').val(id);
+				$('input[name="what"]').val(data.report.what);
+				$('input[name="who"]').val(data.report.who);
+				$('input[name="where"]').val(data.report.where);
+				$('input[name="latitude"]').val(data.report.latitude);
+				$('input[name="longitude"]').val(data.report.longitude);
+				$('input[name="why"]').val(data.report.why);
+				$('input[name="how"]').val(data.report.how);
+				$('input[name="notes"]').val(data.report.catatan_penting);
+				$('input[name="date"]').val(data.report.when);
+				$('input[name="flag_locationedit"]').val(data.report.flag_location);
+				
+				//$("select[name=type] option[value="+data.report.id_activity_jenis+"]").attr('selected','selected');
+				//$("select[name=satker] option[value="+data.report.id_satker+"]").attr('selected','selected');
+				//$("select[name=provinsi] option[value="+data.report.id_provinsi+"]").attr('selected','selected');
+				$("#typeEdit").val(data.report.id_activity_jenis);
+				$("#satkerEdit").val(data.report.id_satker);
+				$("#provinsiEdit").val(data.report.id_provinsi);
+				$('input[name="oldImage"]').val(data.report.gambar);
+				$('#imagePreview').attr('src',`<?= base_url();?>/uploads/reports/`+data.report.gambar);
+				$("#typeEdit").trigger('change');
+				$("#satkerEdit").trigger('change');
+				// $("#provinsiEdit").trigger('change');
+				// $("#kabupatenEdit").trigger('change');
+				// $("#kecamatanEdit").trigger('change');
+				// $("#kelurahanEdit").trigger('change');
+
+				if(data.report.flag_location == 'prov')
+				{
+					getProvinsi(data.report.id_provinsi)
+					getKabupaten(data.report.id_provinsi,0)
+					getKecamatan(0,0)
+					getKelurahan(0,0)
+				}
+				else if(data.report.flag_location == 'kab')
+				{
+					getProvinsi(data.report.id_provinsi)
+					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+					getKecamatan(data.report.id_kabupaten,0)
+					getKelurahan(0,0)
+				}
+				else if(data.report.flag_location == 'kec')
+				{
+					getProvinsi(data.report.id_provinsi)
+					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+					getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
+					getKelurahan(data.report.id_kecamatan,0)
+				}
+				else if(data.report.flag_location == 'kel')
+				{
+					getProvinsi(data.report.id_provinsi)
+					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+					getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
+					getKelurahan(data.report.id_kecamatan,data.report.id_kelurahan)
+				}
+				else
+				{
+					getProvinsi(data.report.id_provinsi)
+					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+					getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
+					getKelurahan(data.report.id_kecamatan,data.report.id_kelurahan)
+				}
+
+				initMap(data.report.latitude, data.report.longitude, 2);
+			},
+			error: function(){
+				alert('Could not displaying data');
+			}           
+		});
+	}
+
+	function getProvinsi(id_provinsi) {
+		$.ajax({
+			url : "api/getProvinsi/"+id_provinsi,
+			method : "GET",
+			async : true,
+			dataType : 'json',
+			success: function(data){
+				//console.log(data);
+				var html = '';
+				var i;
+				html += '<option value="">Pilih Provinsi</option>';
+				for(i=0; i<data.length; i++){
+					if (data[i].id_geografi == id_provinsi) {
+						html += '<option value='+data[i].id_geografi+' selected>'+data[i].nama+'</option>';
+					}else{
+						html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+					}
+				}
+				$('#provinsiEdit').html(html);
+			}
+		});
+	}
+
+	function getKabupaten(id_provinsi,id_kabupaten) {
+		$.ajax({
+			url : "api/getKabupaten/"+id_provinsi,
+			method : "GET",
+			async : true,
+			dataType : 'json',
+			success: function(data){
+				var html = '';
+				var i;
+				html += '<option value="">Pilih Kabupaten</option>';
+				for(i=0; i<data.length; i++){
+					if (data[i].id_geografi == id_kabupaten) {
+						html += '<option value='+data[i].id_geografi+' selected>'+data[i].nama+'</option>';
+					}else{
+						html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+					}
+				}
+				$('#kabupatenEdit').html(html);
+			}
+		});
+	}
+
+	function getKecamatan(id_kabupaten,id_kecamatan) {
+		$.ajax({
+			url : "api/getKecamatan/"+id_kabupaten,
+			method : "GET",
+			async : true,
+			dataType : 'json',
+			success: function(data){
+				var html = '';
+				var i;
+				html += '<option value="">Pilih Kecamatan</option>';
+				for(i=0; i<data.length; i++){
+					if (data[i].id_geografi == id_kecamatan) {
+						html += '<option value='+data[i].id_geografi+' selected>'+data[i].nama+'</option>';
+					}else{
+						html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+					}
+				}
+				$('#kecamatanEdit').html(html);
+			}
+		});
+	}
+
+	function getKelurahan(id_kecamatan,id_kelurahan) {
+		$.ajax({
+			url : "api/getKelurahan/"+id_kecamatan,
+			method : "GET",
+			async : true,
+			dataType : 'json',
+			success: function(data){
+				var html = '';
+				var i;
+				html += '<option value="">Pilih Kelurahan</option>';
+				for(i=0; i<data.length; i++){
+					if (data[i].id_geografi == id_kelurahan) {
+						html += '<option value='+data[i].id_geografi+' selected>'+data[i].nama+'</option>';
+					}else{
+						html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+					}
+				}
+				$('#kelurahanEdit').html(html);
+			}
+		});
+	}
+</script>
+<script>
+	// Note: This example requires that you consent to location sharing when
+	// prompted by your browser. If you see the error "The Geolocation service
+	// failed.", it means you probably did not give permission for the browser to
+	// locate you.
+	var map, infoWindow, marker;
+
+	function placeMarker(map, latlong){
+	if(marker){
+		// pindahkan marker
+		marker.setPosition(latlong);
+		} else {
+		// buat marker baru
+		marker = new google.maps.Marker({
+			position: latlong,
+			map: map
+		});
+		}
+	}
+
+	function initMap(_LAT, _LONG, cek) {
+		_LAT = parseFloat(_LAT);
+		_LONG = parseFloat(_LONG);
+
+		if(cek == 1)
+		{
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: _LAT, lng: _LONG},
+				zoom: 6
+			});
+		
+			marker = new google.maps.Marker({
+					position: {lat: _LAT, lng: _LONG},
+					map,
+				});
+				
+			$("#latitudeEdit").val(_LAT);
+			$("#longitudeEdit").val(_LONG);
+		}
+		else
+		{
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: _LAT, lng: _LONG},
+				zoom: 6
+			});
+		
+			marker = new google.maps.Marker({
+					position: {lat: _LAT, lng: _LONG},
+					map,
+				});
+				
+			$("#latitudeEdit").val(_LAT);
+			$("#longitudeEdit").val(_LONG);
+		}
+
+		// even listner ketika peta diklik
+		google.maps.event.addListener(map, 'click', function(event) {
+			placeMarker(this, event.latLng);
+			$("#latitudeEdit").val(event.latLng.lat());
+			$("#longitudeEdit").val(event.latLng.lng());
+		});
+	}
+
+	function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+		infoWindow.setPosition(pos);
+		infoWindow.setContent(browserHasGeolocation ?
+			'Error: The Geolocation service failed.' :
+			'Error: Your browser doesn\'t support geolocation.');
+		infoWindow.open(map);
+	}
+
+</script>
