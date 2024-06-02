@@ -37,6 +37,8 @@ class Auth extends CI_Model
 			];
 		}
 
+        //var_dump($perms); exit;
+
 		if ($user->num_rows()) 
 		{
 				//if login success

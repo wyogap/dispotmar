@@ -613,3 +613,24 @@ $route['entry_kasus_covid/detail_kontakerat/(:any)/showdetail'] = 'vaksin/EntryK
 $route['entry_kasus_covid/(:any)/deletekontakerat'] = 'vaksin/EntryKasusCovidController/deletekontakerat/$1';
 $route['entry_kasus_covid/edit_kontakerat/(:any)'] = 'vaksin/EntryKasusCovidController/edit_kontakerat/$1';
 $route['entry_kasus_covid/update_kontakerat'] = 'vaksin/EntryKasusCovidController/update_kontakerat';
+
+//kbn
+$route['kbn'] = 'kbn/KbnController/index';
+$route['kbn/store'] = 'kbn/KbnController/store';
+$route['kbn/(:any)'] = 'kbn/KbnController/show/$1';
+$route['kbn/update'] = 'kbn/KbnController/update';
+$route['kbn/(:any)/delete'] = 'kbn/KbnController/delete/$1';
+
+//komcad
+$route['komcad'] = 'komcad/KomcadController/index';
+$route['komcad/store'] = 'komcad/KomcadController/store';
+$route['komcad/(:any)'] = 'komcad/KomcadController/show/$1';
+$route['komcad/update'] = 'komcad/KomcadController/update';
+$route['komcad/(:any)/delete'] = 'komcad/KomcadController/delete/$1';
+
+//sakabahari
+$route['sakabahari'] = 'sakabahari/SakaBahariController/index';
+$route['sakabahari/store'] = 'sakabahari/SakaBahariController/store';
+$route['sakabahari/(:any)'] = 'sakabahari/SakaBahariController/show/$1';
+$route['sakabahari/update'] = 'sakabahari/SakaBahariController/update';
+$route['sakabahari/(:any)/delete'] = 'sakabahari/SakaBahariController/delete/$1';

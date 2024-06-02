@@ -35,9 +35,10 @@
 	<!--Font icons css-->
 	<link href="<?php echo base_url() ?>assets/css/icons.css" rel="stylesheet">
 
-
 	<!-- Nice-select css  -->
 	<link href="<?php echo base_url() ?>assets/plugins/jquery-nice-select/css/nice-select.css" rel="stylesheet" />
+
+    <link href="<?php echo base_url() ?>assets/plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
 
 	<!-- Color-palette css-->
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/css/skins.css" />
@@ -153,6 +154,7 @@
 	<script src="<?php echo base_url() ?>assets/js/vendors/circle-progress.min.js"></script>
 	<script src="<?php echo base_url() ?>assets/plugins/rating/jquery.rating-stars.js"></script>
 
+    
 	<!--Moment js-->
 	<!--Moment js-->
 	<script src="<?php echo base_url() ?>assets/plugins/moment/moment.min.js"></script>
@@ -165,6 +167,7 @@
 
 	<script src="<?php echo base_url() ?>assets/plugins/jquery-countdown/jquery.plugin.min.js"></script>
 	<script src="<?php echo base_url() ?>assets/plugins/jquery-countdown/jquery.countdown.js"></script>
+	<script src="<?php echo base_url() ?>assets/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
 
 	<!-- Custom js-->
 	<script src="<?php echo base_url() ?>assets/js/custom.js"></script>

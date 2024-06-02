@@ -39,7 +39,7 @@ class SatuanKerja extends CI_Model
 
 		$query = $this->db->query($sql);
 		
-		$queryResults =  $query->result();		
+ 		$queryResults =  $query->result();		
 		foreach ( $queryResults as $row ) {
 			$row->id_satker_encrypted = encrypt($row->id_satker);
 		}

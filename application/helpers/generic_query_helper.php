@@ -115,22 +115,25 @@ function satker_tree_geo_table()
             ) satker
             left join 
             (	
-                WITH RECURSIVE geo_tree (id_geografi, nama, level_geografi, geo_path, id_prov) AS
-                (
                 SELECT 
-                    id_geografi, nama, level_geografi, nama as geo_path, id_geografi as id_prov
+                    a.id_geografi, a.nama, a.level_geografi
+                    , case when a.level_geografi=1 then a.nama 
+                        when a.level_geografi=2 then concat(a.nama, ', ', p1.nama)
+                        when a.level_geografi=3 then concat(a.nama, ', ', p1.nama, ', ', p2.nama)
+                        when a.level_geografi=4 then concat(a.nama, ', ', p1.nama, ', ', p2.nama, ', ', p3.nama)
+                        end as geo_path
+                    , case when a.level_geografi=1 then a.id_geografi 
+                        when a.level_geografi=2 then p1.id_geografi
+                        when a.level_geografi=3 then p2.id_geografi
+                        when a.level_geografi=4 then p3.id_geografi
+                        end as id_prov 
                 FROM 
-                    org_geografi
-                WHERE 
-                    level_geografi = 1
-                UNION ALL
-                SELECT 
-                    geo.id_geografi , geo.nama, geo.level_geografi , CONCAT(geo.nama, ', ', geo_tree.geo_path), geo_tree.id_prov
-                FROM 
-                    geo_tree  
-                    JOIN org_geografi AS geo ON geo_tree.id_geografi = geo.id_geografi_parent
-                )
-                SELECT id_geografi, nama, level_geografi, geo_path, id_prov FROM geo_tree
+                    org_geografi a
+                    left join org_geografi p1 on p1.id_geografi=a.id_geografi_parent and p1.is_active=1
+                    left join org_geografi p2 on p2.id_geografi=p1.id_geografi_parent and p2.is_active=1
+                    left join org_geografi p3 on p3.id_geografi=p2.id_geografi_parent and p3.is_active=1
+                where 
+                    a.is_active=1
             ) geografi on satker.id_geografi = geografi.id_geografi 	
     ";
     return $sql;

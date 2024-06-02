@@ -46,12 +46,17 @@ function policy($modul,$action)
 	// 	return FALSE;
     // }
 
-    $permission = $CI->session->userdata('permissions')[$modul];
-    if ($permission[$action] != '') {
-		return TRUE;
-	} else {
+    $permissions = $CI->session->userdata('permissions');
+    if (empty($permissions[$modul])) {
+        return FALSE;
+    }
+
+    $permission = $permissions[$modul];
+    if (empty($permission[$action])) {
 		return FALSE;
     }
+
+    return TRUE;
 }
 
 function encrypt($string)

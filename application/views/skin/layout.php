@@ -440,6 +440,12 @@
 							<li><a class="slide-item" href="<?= site_url()?>dashboard4"><span>Personel dan
 										Lahan</span></a>
 							</li>
+							<li><a class="slide-item" href="<?= site_url()?>dashboard_kbn"><span>Kampung Bahari Nusantara</span></a>
+							</li>
+							<li><a class="slide-item" href="<?= site_url()?>dashboard_komcad"><span>Komcad / Komduk</span></a>
+							</li>
+							<li><a class="slide-item" href="<?= site_url()?>dashboard_sakabahari"><span>Saka Bahari</span></a>
+							</li>
 							<li><a class="slide-item" href="<?= site_url()?>dashboard5"><span>Pelaporan
 										Babinpotmar</span></a>
 							</li>
@@ -490,7 +496,45 @@
 							</li>
 						</ul>
 					</li>
-					<li class="slide" id="tracercovid_div">
+					<li class="slide">
+						<a class="side-menu__item" data-toggle="slide" href="#"><span class="icon-menu-img"><img
+									src="<?php echo base_url() ?>assets/images/svgs/calendar.svg"
+									class="side_menu_img svg-1" alt="image"></span><span
+								class="side-menu__label">Kampung Bahari Nusantara</span><i
+								class="angle fa fa-angle-right"></i></a>
+						<ul class="slide-menu">
+							<li><a href="<?= site_url()?>data_kbn" id="data_kbn" class="slide-item">Data KBN</a></li>
+							<li><a href="<?= site_url()?>klaster_edukasi" class="slide-item">Klaster Edukasi</a></li>
+							<li><a href="<?= site_url()?>klaster_ekonomi" class="slide-item">Klaster Ekonomi</a></li>
+							<li><a href="<?= site_url()?>klaster_kesehatan" class="slide-item">Klaster Kesehatan</a></li>
+							<li><a href="<?= site_url()?>klaster_pariwisata" id="klaster_pariwisata" class="slide-item">Klaster Pariwisata</a></li>
+							<li><a href="<?= site_url()?>klaster_pertahanan" id="klaster_pertahanan" class="slide-item">Klaster Pertahanan</a></li>
+						</ul>
+					</li>
+					<li class="slide">
+						<a class="side-menu__item" data-toggle="slide" href="#"><span class="icon-menu-img"><img
+									src="<?php echo base_url() ?>assets/images/svgs/calendar.svg"
+									class="side_menu_img svg-1" alt="image"></span><span
+								class="side-menu__label">Komcad / Komduk</span><i
+								class="angle fa fa-angle-right"></i></a>
+						<ul class="slide-menu">
+							<li><a href="<?= site_url()?>data_komcad" id="data_komcad" class="slide-item">Data Komcad</a></li>
+							<li><a href="<?= site_url()?>pelaporan_komcad" class="slide-item">Laporan Kegiatan</a></li>
+						</ul>
+					</li>
+					<li class="slide">
+						<a class="side-menu__item" data-toggle="slide" href="#"><span class="icon-menu-img"><img
+									src="<?php echo base_url() ?>assets/images/svgs/calendar.svg"
+									class="side_menu_img svg-1" alt="image"></span><span
+								class="side-menu__label">Saka Bahari</span><i
+								class="angle fa fa-angle-right"></i></a>
+						<ul class="slide-menu">
+							<li><a href="<?= site_url()?>data_sakabahari" id="data_sakabahari" class="slide-item">Data Saka Bahari</a></li>
+							<li><a href="<?= site_url()?>pelaporan_sakabahari" class="slide-item">Laporan Kegiatan</a></li>
+						</ul>
+					</li>
+
+					<!-- <li class="slide" id="tracercovid_div">
 						<a class="side-menu__item" data-toggle="slide" href="#"><span class="icon-menu-img"><img
 									src="<?php echo base_url() ?>assets/images/svgs/login.svg"
 									class="side_menu_img svg-1" alt="image"></span><span class="side-menu__label">Tracer
@@ -503,7 +547,7 @@
 							<li><a href="<?= site_url()?>entry_serbuvaksin" class="slide-item">Entry Serbu Vaksin</a>
 							<li>
 						</ul>
-					</li>
+					</li> -->
 					<li class="slide">
 						<a class="side-menu__item" href="<?= site_url()?>unduhdata_unduh" id="unduhdata_unduh"><span
 								class="icon-menu-img"><img src="<?php echo base_url() ?>assets/images/svgs/login.svg"

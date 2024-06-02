@@ -191,9 +191,16 @@ class Pelaporan extends CI_Model
 
     public function get($request=null)
     {
-		$startDate = $request['startDate'];
-		$finishDate = $request['finishDate'];
-		$satker = $request['satker'];
+        if ($request == null) {
+            $startDate = null;
+            $finishDate = null;
+            $satker = null;
+        }
+        else {
+            $startDate = $request['startDate'] ?: null;
+            $finishDate = $request['finishDate'] ?: null;
+            $satker = $request['satker'];
+        }
 
 		$this->db->select('A.*,B.nama_satker,C.nama_jenis,D.nama_pegawai,DATE_FORMAT(A.created_date, "%d/%m/%Y") as createddate,user1.nama_pegawai,DATE_FORMAT(A.updated_date, "%d/%m/%Y") as LastUpdated');
 		$this->db->from('rekap_activity_sosial AS A');

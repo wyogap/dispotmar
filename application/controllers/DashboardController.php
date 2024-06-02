@@ -30,7 +30,7 @@ class DashboardController extends CI_Controller {
 
 	public function home()
 	{
-		// ALTER TABLE staging_dispotmar.org_satker ADD nama_pimpinan varchar(100) NULL;
+        // ALTER TABLE staging_dispotmar.org_satker ADD nama_pimpinan varchar(100) NULL;
 		$this->data['title'] = 'HOME';
 		$satkers = $this->satker->treeWithGeo();
 		$this->data['satkers_json'] = json_encode($satkers);
