@@ -3,8 +3,8 @@
 	<!-- Page-header opened -->
 	<div class="page-header">
 		<ol class="breadcrumb">
-			<li class="breadcrumb-item"><a href="#"><i class="ti-package mr-1"></i>Demografi</a></li>
-			<li class="breadcrumb-item active" aria-current="page">Saka Bahari</li>
+			<li class="breadcrumb-item"><a href="#"><i class="ti-package mr-1"></i>Saka Bahari</a></li>
+			<li class="breadcrumb-item active" aria-current="page">Rekapitulasi</li>
 		</ol>
 	</div>
 	<!-- Page-header closed -->
@@ -26,7 +26,7 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col-md-12 text-right">
-							<button class="btn btn-success" id="tambahdatas" data-toggle="modal" data-target="#tambahdata">
+							<button class="btn btn-success" id="tambahdatas" onclick=tambahData() >
 								Tambah Data
 							</button>
 						</div>
@@ -38,45 +38,59 @@
 								<th>Opsi</th>
 								<th>No</th>
 								<th>Satker</th>
-								<th>Wilayah</th>
-								<th>Jenis Saka</th>
-								<th>Jumlah Anggota Saka</th>
-								<th>Sekolah yang Terlibat</th>
+								<th>Nama</th>
+								<th>Deskripsi</th>
+								<th>Nama Ketua</th>
+								<th>Foto Ketua</th>
 								<th>Nama Pembina</th>
-								<th>Nomor Gugus Depan</th>
-								<th>Ket</th>
+								<th>Foto Pembina</th>
+								<th>Sekolah Terlibat</th>
+								<th>No Gugus Depan</th>
+								<th>Alamat</th>
+								<th>Desa/Kelurahan</th>
+								<th>Kecamatan</th>
+								<th>Kabupaten/Kota</th>
+								<th>Provinsi</th>
+								<th>Gambar Sampul</th>
 								<th>Updated By</th>
 								<th>Last Updated</th>
 							</thead>
 							<tbody>
-								<?php $no=1; foreach($dataBahari as $bahari): ?>
+								<?php $no=1; foreach($dataKbn as $kbn): ?>
 								<tr>
 									<td class="text-center">
-										<?php if(policy('DEMO','update')): ?>
-										<button onclick="editModal(`<?= encrypt($bahari->id_saka_bahari); ?>`)"
+										<?php if(policy('Komcad','update')): ?>
+										<button onclick="editModal(`<?= $kbn->id_kbn; ?>`)"
 											class="btn btn-sm btn-primary">
 											<i class="fa fa-pencil "></i>
 										</button>
 										<?php endif ?>
-										<?php if(policy('DEMO','delete')): ?>
+										<?php if(policy('Komcad','delete')): ?>
 										<button
-											onclick="deleteConfirm(`<?= encrypt($bahari->id_saka_bahari); ?>`,'<?= $bahari->sekolah_terlibat ?>')"
+											onclick="deleteConfirm(`<?= $kbn->id_kbn; ?>`)"
 											class="btn btn-sm btn-danger">
 											<i class="fa fa-trash "></i>
 										</button>
 										<?php endif ?>
 									</td>
 									<td><?= $no++ ?></td>
-									<td><?= $bahari->nama_satker ?></td>
-									<td><?= $bahari->wilayah ?></td>
-									<td><?= $bahari->saka ?></td>
-									<td><?= $bahari->jumlah_saka ?></td>
-									<td><?= $bahari->sekolah_terlibat ?></td>
-									<td><?= $bahari->nama_pembina ?></td>
-									<td><?= $bahari->no_gugus_depan ?></td>
-									<td><?= $bahari->keterangan ?></td>
-									<td><?= $bahari->nama_pegawai ?></td>
-									<td><?= $bahari->LastUpdated ?></td>
+									<td><?= $kbn->nama_satker ?></td>
+									<td><?= $kbn->nama ?></td>
+									<td><?= $kbn->deskripsi ?></td>
+									<td><?= $kbn->nama_ketua ?></td>
+									<td><?= $kbn->foto_ketua ?></td>
+									<td><?= $kbn->nama_pembina ?></td>
+									<td><?= $kbn->foto_pembina ?></td>
+									<td><?= $kbn->sekolah_terlibat ?></td>
+									<td><?= $kbn->no_gugus_depan ?></td>
+									<td><?= $kbn->alamat ?></td>
+									<td><?= $kbn->nama_kelurahan ?></td>
+									<td><?= $kbn->nama_kecamatan ?></td>
+									<td><?= $kbn->nama_kabupaten ?></td>
+									<td><?= $kbn->nama_provinsi ?></td>
+									<td><?= $kbn->gambar_sampul ?></td>
+									<td><?= $kbn->updated_by ?></td>
+									<td><?= $kbn->updated_date?></td>
 								</tr>
 								<?php endforeach ?>
 							</tbody>
@@ -91,9 +105,9 @@
 </div>
 
 <!-- Tambah Data -->
-<div class="modal fade" data-backdrop="static" data-keyboard="false" id="tambahdata" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 	aria-hidden="true">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog" role="document" style="width: 800px; max-width: 800px;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel">Tambah Data</h5>
@@ -101,11 +115,12 @@
 					<span aria-hidden="true">×</span>
 				</button>
 			</div>
-			<form class="form-horizontal" method="POST" id="addForm">
-			<input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>">
+			<form class="form-horizontal" method="POST" id="editForm" tcg-mode="edit">
+                <input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>">
+                <input type="hidden" name="id_kbn" value="">
 				<div class="modal-body">
 					<div class="row">
-						<div class="col-lg-12 col-md-12">
+						<div class="col-lg-12 col-md-12" tcg-allow-edit=1 tcg-allow-add=1>
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label">Satker </label>
 								<div class="col-md-9">
@@ -123,10 +138,67 @@
 									<div class="text-danger warning-satker"></div>
 								</div>
 							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Wilayah</label>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="nama">Nama</label>
 								<div class="col-md-9">
-									<div class="col-md-15">
+									<input type="text" id="nama" name="nama" class="form-control">
+									<div class="invalid-feedback warning-nama"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="deskripsi">Deskripsi</label>
+								<div class="col-md-9">
+									<input type="text" id="deskripsi" name="deskripsi" class="form-control">
+									<div class="invalid-feedback warning-deskripsi"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="nama_ketua">Nama Ketua</label>
+								<div class="col-md-9">
+									<input type="text" id="nama_ketua" name="nama_ketua" class="form-control">
+									<div class="invalid-feedback warning-nama_ketua"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+                                <label class="col-md-3 col-form-label" for="foto_ketua">Foto Ketua</label>
+								<div class="col-md-9">
+                                    <input type="file" class="dropify" id="foto_ketua" name="foto_ketua">
+									<div class="invalid-feedback warning-foto_ketua"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="nama_pembina">Nama Pembina</label>
+								<div class="col-md-9">
+									<input type="text" id="nama_pembina" name="nama_pembina" class="form-control">
+									<div class="invalid-feedback warning-nama_pembina"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+                                <label class="col-md-3 col-form-label" for="foto_pembina">Foto Pembina</label>
+								<div class="col-md-9">
+                                    <input type="file" class="dropify" id="foto_pembina" name="foto_pembina">
+									<div class="invalid-feedback warning-foto_pembina"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="sekolah_terlibat">Sekolah Terlibat</label>
+								<div class="col-md-9">
+									<input type="text" id="sekolah_terlibat" name="sekolah_terlibat" class="form-control">
+									<div class="invalid-feedback warning-sekolah_terlibat"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="no_gugus_depan">No Gugus Depan</label>
+								<div class="col-md-9">
+									<input type="text" id="no_gugus_depan" name="no_gugus_depan" class="form-control">
+									<div class="invalid-feedback warning-no_gugus_depan"></div>
+								</div>
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label">Lokasi</label>
+								<div class="col-md-9">
+                                    <div class="row">
+									<div class="col-md-6 mb-4">
 										<select class="form-control" id="provinsi" name="provinsi" style="width: 100%;">
 											<option value="">Pilih Provinsi</option>
 											<?php foreach($provinsi as $prov): ?>
@@ -135,196 +207,49 @@
 										</select>
 										<div class="text-danger warning-provinsi"></div>
 									</div>
-									<br>
-									<div class="col-md-15">
+									<div class="col-md-6 mb-4">
 										<select class="form-control" id="kabupaten" name="kabupaten" style="width: 100%;">
 											<option value="">Pilih Kabupaten</option>
 										</select>
 									</div>
-									<br>
-									<div class="col-md-15">
+									<div class="col-md-6 mb-4">
 										<select class="form-control" id="kecamatan" name="kecamatan" style="width: 100%;">
 											<option value="">Pilih Kecamatan</option>
 										</select>
 									</div>
-									<br>
-									<div class="col-md-15">
+									<div class="col-md-6 mb-4">
 										<select class="form-control" id="kelurahan" name="kelurahan" style="width: 100%;">
 											<option value="">Pilih Kelurahan</option>
 										</select>
-										<input type="text" id="flag_location" name="flag_location" style="display:none;" class="form-control">
 									</div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Jenis Saka</label>
-								<div class="col-md-9">
-									<select class="form-control" name="jenis_saka" id="jenis_saka" style="width: 100%;">
-										<?php foreach($jenis_saka as $saka): ?>
-											<option value="<?= $saka->id_jenis_saka ?>"><?= $saka->nama ?></option>
-										<?php endforeach?>
-									</select>
-									<div class="invalid-feedback warning-jenis_saka"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="jumlah_saka">Jumlah Anggota Saka</label>
-								<div class="col-md-9">
-									<input type="number" id="" name="jumlah_saka" class="form-control">
-									<div class="invalid-feedback warning-jumlah_saka"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="sekolah_terlibat">Sekolah yang Terlibat</label>
-								<div class="col-md-9">
-									<input type="text" id="" name="sekolah_terlibat" class="form-control">
-									<div class="invalid-feedback warning-sekolah_terlibat"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="nama_pembina">Nama Pembina</label>
-								<div class="col-md-9">
-									<input type="text" id="" name="nama_pembina" class="form-control">
-									<div class="invalid-feedback warning-nama_pembina"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="no_gugus_depan">Nomor Gugus Depan</label>
-								<div class="col-md-9">
-									<input type="number" id="" name="no_gugus_depan" class="form-control">
-									<div class="invalid-feedback warning-no_gugus_depan"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="notes">Keterangan</label>
-								<div class="col-md-9">
-									<input type="text" id="" name="notes" class="form-control">
-									<div class="text-danger warning-notes"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-					<button type="submit" class="btn btn-primary">Simpan</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-
-<!-- Edit Data -->
-<div class="modal fade" data-backdrop="static" data-keyboard="false" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-	aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Edit Data</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">×</span>
-				</button>
-			</div>
-			<form class="form-horizontal" method="POST" id="editForm">
-			<input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>">
-			<input type="hidden" name="id" value="">
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-lg-12 col-md-12">
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Satker </label>
-								<div class="col-md-9">
-										<?php if(($this->session->userdata('role') == 'Satker')): ?>
-											<input type="hidden" class="form-control" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
-											<select class="form-control" id="satkerPicked" name="satkerPicked" style="width: 100%;" disabled>
-										<?php else: ?>
-											<select class="form-control" id="satkerEdit" name="satker" style="width: 100%;">
-										<?php endif ?>
-										<option value="">Pilih Satuan Kerja</option>
-										<?php foreach($satkers as $satker): ?>
-										<option value="<?= $satker->id_satker ?>"><?= $satker->nama_satker ?></option>
-										<?php endforeach ?>
-									</select>
-									<div class="text-danger warning-satker"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Wilayah</label>
-								<div class="col-md-9">
-									<div class="col-md-15">
-										<select class="form-control" id="provinsiEdit" name="provinsi" style="width: 100%;">
-											<option value="">Pilih Provinsi</option>
-											<?php foreach($provinsi as $prov): ?>
-											<option value="<?= $prov->id_geografi ?>"><?= $prov->nama ?></option>
-											<?php endforeach ?>
-										</select>
-										<div class="text-danger warning-provinsi"></div>
+									<div class="col-md-12 mb-4">
+                                        <input type="text" id="alamat" name="alamat" class="form-control" placeholder="Alamat Jalan">
+                                        <div class="invalid-feedback warning-alamat"></div>
 									</div>
-									<br>
-									<div class="col-md-15">
-										<select class="form-control" id="kabupatenEdit" name="kabupaten" style="width: 100%;">
-											<option value="">Pilih Kabupaten</option>
-										</select>
-									</div>
-									<br>
-									<div class="col-md-15">
-										<select class="form-control" id="kecamatanEdit" name="kecamatan" style="width: 100%;">
-											<option value="">Pilih Kecamatan</option>
-										</select>
-									</div>
-									<br>
-									<div class="col-md-15">
-										<select class="form-control" id="kelurahanEdit" name="kelurahan" style="width: 100%;">
-											<option value="">Pilih Kelurahan</option>
-										</select>
-										<input type="text" id="flag_locationedit" name="flag_locationedit" style="display:none;" class="form-control">
-									</div>
-								</div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm btn-square" onclick="getCurrentPlace()"><i class="fa fa-map-pin mr-2"></i> Dapatkan Lokasi</button>
+                                    </div>
+                                    <div class="row">
+                                    <div class="col-md-12"><div id="map" style="position:relative; width: 100%; height: 100%; min-height: 350px; z-index: 1;"></div>
+                                    </div>
+                                    <div class="col-md-12">NB : Silahkan klik di peta <b>(<i class="fa fa-map-marker"></i>)</b> untuk perubahan data koordinat.</div>
+                                    <div class="col-md-6">
+                                        <label class="col-form-label" for="latitude">Lintang</label>
+                                        <input type="text" id="latitude" name="latitude" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="col-form-label" for="latitude">Bujur</label>
+                                        <input type="text" id="longitude" name="longitude" class="form-control">
+                                    </div>
+                                    </div>
+                                </div>
 							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label">Jenis Saka</label>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="gambar_sampul">Gambar Sampul</label>
 								<div class="col-md-9">
-									<select class="form-control" name="jenis_saka" id="jenis_sakaEdit" style="width: 100%;">
-										<?php foreach($jenis_saka as $saka): ?>
-											<option value="<?= $saka->id_jenis_saka ?>"><?= $saka->nama ?></option>
-										<?php endforeach?>
-									</select>
-									<div class="invalid-feedback warning-jenis_saka"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="jumlah_saka">Jumlah Anggota Saka</label>
-								<div class="col-md-9">
-									<input type="number" id="" name="jumlah_saka" class="form-control">
-									<div class="invalid-feedback warning-jumlah_saka"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="sekolah_terlibat">Sekolah yang Terlibat</label>
-								<div class="col-md-9">
-									<input type="text" id="" name="sekolah_terlibat" class="form-control">
-									<div class="invalid-feedback warning-sekolah_terlibat"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="nama_pembina">Nama Pembina</label>
-								<div class="col-md-9">
-									<input type="text" id="" name="nama_pembina" class="form-control">
-									<div class="invalid-feedback warning-nama_pembina"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="no_gugus_depan">Nomor Gugus Depan</label>
-								<div class="col-md-9">
-									<input type="number" id="" name="no_gugus_depan" class="form-control">
-									<div class="invalid-feedback warning-no_gugus_depan"></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="notes">Keterangan</label>
-								<div class="col-md-9">
-									<input type="text" id="" name="notes" class="form-control">
-									<div class="text-danger warning-notes"></div>
+                                    <input type="file" class="dropify" id="gambar_sampul" name="gambar_sampul">
+									<div class="invalid-feedback warning-gambar_sampul"></div>
 								</div>
 							</div>
 						</div>
@@ -365,44 +290,13 @@
 </div>
 
 <script src="<?php echo base_url() ?>assets/js/vendors/jquery-3.2.1.min.js"></script>
+<script async="false" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByRkCzDDjo-th8ecT72ZBN6f69RUmwt0I&callback=initMap&libraries=places"></script>
+
 <script>
+    var profil = null;
+
 	$(document).ready(function () {
-		$("#satker").select2({
-			dropdownParent: $('#tambahdata')
-		});
-		$("#provinsi").select2({
-			dropdownParent: $('#tambahdata')
-		});
-		$("#kabupaten").select2({
-			dropdownParent: $('#tambahdata')
-		});
-		$("#kecamatan").select2({
-			dropdownParent: $('#tambahdata')
-		});
-		$("#kelurahan").select2({
-			dropdownParent: $('#tambahdata')
-		});
-		$("#jenis_saka").select2({
-			dropdownParent: $('#tambahdata')
-		});
-
-
-		$("#satkerEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#provinsiEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kabupatenEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kecamatanEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kelurahanEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#jenis_sakaEdit").select2({
+		$("#editModal select").select2({
 			dropdownParent: $('#editModal')
 		});
 
@@ -417,37 +311,20 @@
 			$('.warning-' + name).html('')
 		});
 
-		$('#addForm').submit(function () {
-			$.ajax({
-				type: "POST",
-				url: "<?= site_url() ?>/demografi_sakaBahari/store",
-				dataType: "json",
-				data: $(this).serialize(),
-				success: function (data) {
-					if (data[0].status == 0) {
-						$('input[name="csrf_al"]').val(data[0].csrf)
-						$.each(data[1], function (key, value) {
-							$('.warning-' + key).html(value)
-							$('.warning-' + key).show()
-							if ($('input[name="' + key + '"]').val() == '') {
-								$('input[name="' + key + '"]').addClass('is-invalid')
-							}
-						});
-					} else {
-						window.location.reload();
-					}
-				},
-				error: function (data) {
-					console.log(data)
-				}
-			});
-			return false;
-		});
-
 		$('#editForm').submit(function () {
+            let mode = $(this).getAttr("tcg-mode");
+            if (mode == null) {
+                mode == 'edit';
+            }
+
+            let url = "<?= site_url() ?>komcad/update";
+            if (mode == 'add') {
+                url = "<?= site_url() ?>komcad/store";
+            }
+
 			$.ajax({
 				type: "POST",
-				url: "<?= site_url() ?>demografi_sakaBaharis/update",
+				url: url,
 				dataType: "json",
 				data: $(this).serialize(),
 				success: function (data) {
@@ -469,10 +346,14 @@
 		});
 
 		$('.modal').on('hidden.bs.modal', function (e) {
+            let modal = $(this);
+            let frm = modal.find("#editForm");
+
 			$('select').find('option:selected').removeAttr('selected');
 			$('input').val('');
+            $('#foto').val(null);
 
-			<?php if(policy('DEMO','read')): ?>
+            <?php if(policy('Komcad','read')): ?>
 			$('select[name=satkerPicked] option[value="<?= $this->session->userdata('id_satker') ?>"]').attr('selected','selected');
 			$('input[name="satker"]').val("<?= $this->session->userdata('id_satker') ?>")
 			<?php endif ?>
@@ -497,7 +378,10 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kabupaten').html(html);
+                        let field = $('#kabupaten');
+						field.html(html);
+                        //set value
+                        field.val( field.attr("defaultValue") );
 					}
 				});
 				return false;
@@ -505,16 +389,9 @@
 				$('#kabupaten').html('<option value="">Pilih Kabupaten</option>');
 			}
 		}); 
+
 		$('#kabupaten').change(function(){ 
 			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_location').val("prov");
-			}
-			else
-			{
-				$('#flag_location').val("kab");
-			}
 
 			if (id) {
 				$.ajax({
@@ -529,7 +406,10 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kecamatan').html(html);
+                        let field = $('#kecamatan');
+						field.html(html);
+                        //set value
+                        field.val( field.attr("defaultValue") );
 					}
 				});
 				return false;
@@ -537,16 +417,9 @@
 				$('#kecamatan').html('<option value="">Pilih Kecamatan</option>');
 			}
 		}); 
+
 		$('#kecamatan').change(function(){ 
 			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_location').val("kab");
-			}
-			else
-			{
-				$('#flag_location').val("kec");
-			}
 
 			if (id) {
 				$.ajax({
@@ -561,7 +434,10 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kelurahan').html(html);
+                        let field = $('#kelurahan');
+						field.html(html);
+                        //set value
+                        field.val( field.attr("defaultValue") );
 					}
 				});
 				return false;
@@ -569,121 +445,12 @@
 				$('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
 			}
 		}); 
+
 		$('#kelurahan').change(function(){
 			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_location').val("kec");
-			}
-			else
-			{
-				$('#flag_location').val("kel");
-			}
 		}); 
 
-		$('#provinsiEdit').change(function(){ 
-			var id= $(this).val();
-			$('#flag_locationedit').val("prov");
-
-			if (id) {
-				$.ajax({
-					url : "<?= site_url() ?>/api/getKabupaten/"+id,
-					method : "GET",
-					async : true,
-					dataType : 'json',
-					success: function(data){
-						var html = '';
-						var i;
-						html += '<option value="">Pilih Kabupaten</option>';
-						for(i=0; i<data.length; i++){
-							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
-						}
-						$('#kabupatenEdit').html(html);
-						$('#kecamatanEdit').html('<option value="">Pilih Kecamatan</option>');
-						$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
-					}
-				});
-				return false;
-			} else {
-				$('#kabupatenEdit').html('<option value="">Pilih Kabupaten</option>');
-			}
-		}); 
-		$('#kabupatenEdit').change(function(){ 
-			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_locationedit').val("prov");
-			}
-			else
-			{
-				$('#flag_locationedit').val("kab");
-			}
-
-			if (id) {
-				$.ajax({
-					url : "<?= site_url() ?>/api/getKecamatan/"+id,
-					method : "GET",
-					async : true,
-					dataType : 'json',
-					success: function(data){
-						var html = '';
-						var i;
-						html += '<option value="">Pilih Kecamatan</option>';
-						for(i=0; i<data.length; i++){
-							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
-						}
-						$('#kecamatanEdit').html(html);
-						$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
-					}
-				});
-				return false;
-			} else {
-				$('#kecamatanEdit').html('<option value="">Pilih Kecamatan</option>');
-			}
-		}); 
-		$('#kecamatanEdit').change(function(){ 
-			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_locationedit').val("kab");
-			}
-			else
-			{
-				$('#flag_locationedit').val("kec");
-			}
-
-			if (id) {
-				$.ajax({
-					url : "<?= site_url() ?>/api/getKelurahan/"+id,
-					method : "GET",
-					async : true,
-					dataType : 'json',
-					success: function(data){
-						var html = '';
-						var i;
-						html += '<option value="">Pilih Kelurahan</option>';
-						for(i=0; i<data.length; i++){
-							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
-						}
-						$('#kelurahanEdit').html(html);
-					}
-				});
-				return false;
-			} else {
-				$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
-			}
-		}); 
-		$('#kelurahanEdit').change(function(){ 
-			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_locationedit').val("kec");
-			}
-			else
-			{
-				$('#flag_locationedit').val("kel");
-			}
-		});
+        initMap();
 	});
 
 	function getProvinsi(id_provinsi) {
@@ -775,88 +542,43 @@
 		});
 	}
 
+    function tambahData() {
+        $('#editModal').modal();
+
+        $("#editForm").find("[tcg-allow-add=1]").show();
+        $("#editForm").find("[tcg-allow-add=0]").hide();
+    }
+
 	function editModal(id) {
 		$('#editModal').modal();
+
+        $("#editForm").find("[tcg-allow-edit=1]").show();
+        $("#editForm").find("[tcg-allow-edit=0]").hide();
+
 		$.ajax({
 			type: 'ajax',
 			method: 'GET',
-			url: '<?= site_url() ?>demografi_sakaBahari/' + id,
+			url: '<?= site_url() ?>komcad/' + id,
 			data: {
 				id: id
 			},
 			dataType: 'json',
 			success: function (data) {
-				$('select[name=satker]').find('option:selected').removeAttr('selected');
-				$('select[name=satkerPicked]').find('option:selected').removeAttr('selected');
-				$('select[name=provinsi]').find('option:selected').removeAttr('selected');
-				$('select[name=kabupaten]').find('option:selected').removeAttr('selected');
-				$('select[name=kecamatan]').find('option:selected').removeAttr('selected');
-				$('select[name=kelurahan]').find('option:selected').removeAttr('selected');
-				$('select[name=jenis_saka]').find('option:selected').removeAttr('selected');
-				$('input[name="id"]').val(id);
-				$('input[name="satker"]').val(data.bahari.id_satker);
-				$('input[name="jumlah_saka"]').val(data.bahari.jumlah_saka);
-				$('input[name="sekolah_terlibat"]').val(data.bahari.sekolah_terlibat);
-				$('input[name="nama_pembina"]').val(data.bahari.nama_pembina);
-				$('input[name="no_gugus_depan"]').val(data.bahari.no_gugus_depan);
-				$('input[name="notes"]').val(data.bahari.keterangan);
-				$('input[name="flag_locationedit"]').val(data.bahari.flag_location);
-				//$("select[name=satker] option[value="+data.bahari.id_satker+"]").attr('selected','selected');
-				$("select[name=satkerPicked] option[value=" + data.bahari.id_satker + "]").attr('selected','selected');
-				//$("select[name=provinsi] option[value="+data.bahari.id_provinsi+"]").attr('selected','selected');
-				//$("select[name=jenis_saka] option[value="+data.bahari.id_jenis_saka+"]").attr('selected','selected');
+                profil = data.komcad;
 
-				$("#satkerEdit").val(data.bahari.id_satker);
-				$("#provinsiEdit").val(data.bahari.id_provinsi);
-				$("#jenis_sakaEdit").val(data.bahari.id_jenis_saka);
-				
-				$("#satkerEdit").trigger('change');
-				// $("#provinsiEdit").trigger('change');
-				// $("#kabupatenEdit").trigger('change');
-				// $("#kecamatanEdit").trigger('change');
-				// $("#kelurahanEdit").trigger('change');
-				$("#jenis_sakaEdit").trigger('change');
+                elements = $('#editForm').find("[name!='']");
+                elements.each(function(idx) {
+                    el = $(this);
+                    field = el.attr('name');
+                    val = data.komcad[field];
+                    this.value=val;
+                    this.defaultValue=val;
+                })
 
-				// getProvinsi(data.bahari.id_provinsi)
-				// getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-				// getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-				// getKelurahan(data.bahari.id_kecamatan,data.bahari.id_kelurahan)
+                $("#provinsi").trigger("change");
+                $("#kabupaten").trigger("change");
+                $("#kecamatan").trigger("change");
 
-				if(data.bahari.flag_location == 'prov')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,0)
-					getKecamatan(0,0)
-					getKelurahan(0,0)
-				}
-				else if(data.bahari.flag_location == 'kab')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,0)
-					getKelurahan(0,0)
-				}
-				else if(data.bahari.flag_location == 'kec')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-					getKelurahan(data.bahari.id_kecamatan,0)
-				}
-				else if(data.bahari.flag_location == 'kel')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-					getKelurahan(data.bahari.id_kecamatan,data.bahari.id_kelurahan)
-				}
-				else
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-					getKelurahan(data.bahari.id_kecamatan,data.bahari.id_kelurahan)
-				}
 			},
 			error: function (data) {
 				console.log(data);
@@ -867,7 +589,97 @@
 	function deleteConfirm(id, content) {
 		$('input[name="id"]').val(id);
 		$('#delete-modal-content').html('Anda akan menghapus data <b>' + content + '</b>');
-		$('#formDelete').attr('action', '<?= site_url() ?>demografi_sakaBahari/' + id + '/delete');
+		$('#formDelete').attr('action', '<?= site_url() ?>komcad/' + id + '/delete');
 		$('#deleteModal').modal();
+	}
+</script>
+
+<script>
+	var map, infoWindow, marker, service, infoWindow;
+
+	function getCurrentPlace(){
+		var provisi, kabupaten, kecamatan, kelurahan, loc;
+		provisi = $('#provinsi').children("option:selected").text();
+		kabupaten = $('#kabupaten').children("option:selected").text();
+		kecamatan = $('#kecamatan').children("option:selected").text();
+		kelurahan = $('#kelurahan').children("option:selected").text();
+
+		if (kelurahan != 'Pilih Kelurahan') {
+			loc = kelurahan
+		}else if (kecamatan != 'Pilih Kecamatan') {
+			loc = kecamatan
+		}else if (kabupaten != 'Pilih Kabupaten') {
+			loc = kabupaten
+		}else if (provisi != 'Pilih Provinsi') {
+			loc = provisi
+		}
+
+		getLocation(loc)
+	}
+
+	function placeMarker(map, latlong){
+	    if(marker){
+			// pindahkan marker
+			marker.setPosition(latlong);
+	    } else {
+			// buat marker baru
+			marker = new google.maps.Marker({
+				position: latlong,
+				map: map
+			});
+		}
+	}
+
+	function getLocation(loc){
+		const request = {
+			query: loc,
+			fields: ["name", "geometry"],
+		};
+		service = new google.maps.places.PlacesService(map);
+		service.findPlaceFromQuery(request, (results, status) => {
+			if (status === google.maps.places.PlacesServiceStatus.OK) {
+				for (let i = 0; i < results.length; i++) {
+					createMarker(results[i]);
+				}
+
+				map.setCenter(results[0].geometry.location);
+			}
+		});
+	}
+
+	function createMarker(place) {
+		if(marker){
+			marker.setPosition(place.geometry.location);
+	    } else {
+			marker = new google.maps.Marker({
+				map,
+				position: place.geometry.location,
+			});
+		}
+		$("#latitude").val(place.geometry.location.lat());
+		$("#longitude").val(place.geometry.location.lng());
+	}
+
+	function initMap() {
+		const startLocation = new google.maps.LatLng(-6.1755367, 106.8273503);
+		infowindow = new google.maps.InfoWindow();
+		map = new google.maps.Map(document.getElementById("map"), {
+			center: startLocation,
+			zoom: 15,
+		});
+
+		google.maps.event.addListener(map, 'click', function(event) {
+			placeMarker(this, event.latLng);
+			$("#latitude").val(event.latLng.lat());
+			$("#longitude").val(event.latLng.lng());
+		});
+	}
+
+	function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+		infoWindow.setPosition(pos);
+		infoWindow.setContent(browserHasGeolocation ?
+								'Error: The Geolocation service failed.' :
+								'Error: Your browser doesn\'t support geolocation.');
+		infoWindow.open(map);
 	}
 </script>

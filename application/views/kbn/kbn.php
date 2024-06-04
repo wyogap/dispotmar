@@ -106,12 +106,12 @@
 				</button>
 			</div>
 			<form class="form-horizontal" method="POST" id="editForm" tcg-mode="edit">
-			<input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>">
-            <input type="hidden" name="id_kbn" value="">
+                <input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>">
+                <input type="hidden" name="id_kbn" value="">
 				<div class="modal-body">
 					<div class="row">
 						<div class="col-lg-12 col-md-12">
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label">Satker </label>
 								<div class="col-md-9">
 									<?php if(($this->session->userdata('role') == 'Satker')): ?>
@@ -128,7 +128,7 @@
 									<div class="text-danger warning-satker"></div>
 								</div>
 							</div>
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label">Klaster </label>
 								<div class="col-md-9">
                                     <select class="form-control" id="klaster" name="klater" style="width: 100%;" multiple>
@@ -141,14 +141,14 @@
 									<div class="text-danger warning-klaster"></div>
 								</div>
 							</div>
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="nama">Nama KBN</label>
 								<div class="col-md-9">
 									<input type="text" id="nama" name="nama" class="form-control">
 									<div class="invalid-feedback warning-nama"></div>
 								</div>
 							</div>
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label">Lokasi</label>
 								<div class="col-md-9">
                                     <div class="row">
@@ -196,42 +196,42 @@
                                     </div>
                                 </div>
 							</div>
-							<!-- <div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=0 tcg-allow-add=0>
 								<label class="col-md-3 col-form-label" for="deskripsi">Deskripsi</label>
 								<div class="col-md-9">
 									<textarea type="text" id="deskripsi" name="deskripsi" class="form-control"></textarea>
 									<div class="invalid-feedback warning-deskripsi"></div>
 								</div>
 							</div>
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=0 tcg-allow-add=0>
 								<label class="col-md-3 col-form-label" for="tanggal_mulai">Tanggal Mulai</label>
 								<div class="col-md-9">
 									<input type="text" id="" name="tanggal_mulai" class="form-control">
 									<div class="invalid-feedback warning-tanggal_mulai"></div>
 								</div>
 							</div>
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=0 tcg-allow-add=0>
 								<label class="col-md-3 col-form-label" for="tanggal_selesai">Tanggal Selesai</label>
 								<div class="col-md-9">
 									<input type="text" id="" name="tanggal_selesai" class="form-control">
 									<div class="invalid-feedback warning-tanggal_selesai"></div>
 								</div>
-							</div> -->
-							<div class="form-group row">
+							</div>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="nama_tertua_desa">Nama Tertua Desa</label>
 								<div class="col-md-9">
 									<input type="text" id="" name="nama_tertua_desa" class="form-control">
 									<div class="text-danger warning-nama_tertua_desa"></div>
 								</div>
 							</div>
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="nama_ketua_pelaksana">Nama Ketua Pelaksana</label>
 								<div class="col-md-9">
 									<input type="text" id="" name="nama_ketua_pelaksana" class="form-control">
 									<div class="text-danger warning-nama_ketua_pelaksana"></div>
 								</div>
 							</div>
-							<div class="form-group row">
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="gambar_sampul">Gambar Sampul</label>
 								<div class="col-md-9">
                                     <input type="file" class="dropify" id="gambar_sampul" name="gambar_sampul">
@@ -279,23 +279,10 @@
 <script async="false" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByRkCzDDjo-th8ecT72ZBN6f69RUmwt0I&callback=initMap&libraries=places"></script>
 
 <script>
+    var kbn = null;
+
 	$(document).ready(function () {
-		$("#satker").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#provinsi").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kabupaten").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kecamatan").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kelurahan").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#klaster").select2({
+		$("#editModal select").select2({
 			dropdownParent: $('#editModal')
 		});
 
@@ -308,33 +295,6 @@
 		$('select').on('change', function () {
 			var name = $(this).attr('name')
 			$('.warning-' + name).html('')
-		});
-
-		$('#addForm').submit(function () {
-			$.ajax({
-				type: "POST",
-				url: "<?= site_url() ?>/kbn/store",
-				dataType: "json",
-				data: $(this).serialize(),
-				success: function (data) {
-					if (data[0].status == 0) {
-						$('input[name="csrf_al"]').val(data[0].csrf)
-						$.each(data[1], function (key, value) {
-							$('.warning-' + key).html(value)
-							$('.warning-' + key).show()
-							if ($('input[name="' + key + '"]').val() == '') {
-								$('input[name="' + key + '"]').addClass('is-invalid')
-							}
-						});
-					} else {
-						window.location.reload();
-					}
-				},
-				error: function (data) {
-					console.log(data)
-				}
-			});
-			return false;
 		});
 
 		$('#editForm').submit(function () {
@@ -375,13 +335,9 @@
             let modal = $(this);
             let frm = modal.find("#editForm");
 
-            // frm.each(function(){
-            //     this.reset();
-            // });
-
 			$('select').find('option:selected').removeAttr('selected');
 			$('input').val('');
-            //$('#gambar_sampul').replaceWith('<input type="file" class="dropify" id="gambar_sampul" name="gambar_sampul">');
+            $('#gambar_sampul').val(null);
 
 			<?php if(policy('KBN','read')): ?>
 			$('select[name=satkerPicked] option[value="<?= $this->session->userdata('id_satker') ?>"]').attr('selected','selected');
@@ -408,7 +364,10 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kabupaten').html(html);
+                        let field = $('#kabupaten');
+						field.html(html);
+                        //set value
+                        field.val( field.attr("defaultValue") );
 					}
 				});
 				return false;
@@ -419,14 +378,6 @@
 
 		$('#kabupaten').change(function(){ 
 			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_location').val("prov");
-			}
-			else
-			{
-				$('#flag_location').val("kab");
-			}
 
 			if (id) {
 				$.ajax({
@@ -441,7 +392,10 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kecamatan').html(html);
+                        let field = $('#kecamatan');
+						field.html(html);
+                        //set value
+                        field.val( field.attr("defaultValue") );
 					}
 				});
 				return false;
@@ -452,14 +406,6 @@
 
 		$('#kecamatan').change(function(){ 
 			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_location').val("kab");
-			}
-			else
-			{
-				$('#flag_location').val("kec");
-			}
 
 			if (id) {
 				$.ajax({
@@ -474,7 +420,10 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kelurahan').html(html);
+                        let field = $('#kelurahan');
+						field.html(html);
+                        //set value
+                        field.val( field.attr("defaultValue") );
 					}
 				});
 				return false;
@@ -485,14 +434,7 @@
 
 		$('#kelurahan').change(function(){
 			var id= $(this).val();
-			if(id == '')
-			{
-				$('#flag_location').val("kec");
-			}
-			else
-			{
-				$('#flag_location').val("kel");
-			}
+
 		}); 
 
         initMap();
@@ -589,10 +531,16 @@
 
     function tambahData() {
         $('#editModal').modal();
+
+        $("#editForm").find("[tcg-allow-add=1]").show();
+        $("#editForm").find("[tcg-allow-add=0]").hide();
     }
 
 	function editModal(id) {
 		$('#editModal').modal();
+
+        $("#editForm").find("[tcg-allow-edit=1]").show();
+        $("#editForm").find("[tcg-allow-edit=0]").hide();
 
 		$.ajax({
 			type: 'ajax',
@@ -603,77 +551,22 @@
 			},
 			dataType: 'json',
 			success: function (data) {
-				$('select[name=satker]').find('option:selected').removeAttr('selected');
-				$('select[name=satkerPicked]').find('option:selected').removeAttr('selected');
-				$('select[name=provinsi]').find('option:selected').removeAttr('selected');
-				$('select[name=kabupaten]').find('option:selected').removeAttr('selected');
-				$('select[name=kecamatan]').find('option:selected').removeAttr('selected');
-				$('select[name=kelurahan]').find('option:selected').removeAttr('selected');
-				$('select[name=jenis_saka]').find('option:selected').removeAttr('selected');
-				$('input[name="id"]').val(id);
-				$('input[name="satker"]').val(data.bahari.id_satker);
-				$('input[name="jumlah_saka"]').val(data.bahari.jumlah_saka);
-				$('input[name="sekolah_terlibat"]').val(data.bahari.sekolah_terlibat);
-				$('input[name="nama_pembina"]').val(data.bahari.nama_pembina);
-				$('input[name="no_gugus_depan"]').val(data.bahari.no_gugus_depan);
-				$('input[name="notes"]').val(data.bahari.keterangan);
-				$('input[name="flag_locationedit"]').val(data.bahari.flag_location);
-				//$("select[name=satker] option[value="+data.bahari.id_satker+"]").attr('selected','selected');
-				$("select[name=satkerPicked] option[value=" + data.bahari.id_satker + "]").attr('selected','selected');
-				//$("select[name=provinsi] option[value="+data.bahari.id_provinsi+"]").attr('selected','selected');
-				//$("select[name=jenis_saka] option[value="+data.bahari.id_jenis_saka+"]").attr('selected','selected');
 
-				$("#satkerEdit").val(data.bahari.id_satker);
-				$("#provinsiEdit").val(data.bahari.id_provinsi);
-				$("#jenis_sakaEdit").val(data.bahari.id_jenis_saka);
-				
-				$("#satkerEdit").trigger('change');
-				// $("#provinsiEdit").trigger('change');
-				// $("#kabupatenEdit").trigger('change');
-				// $("#kecamatanEdit").trigger('change');
-				// $("#kelurahanEdit").trigger('change');
-				$("#jenis_sakaEdit").trigger('change');
+                kbn = data.kbn;
 
-				// getProvinsi(data.bahari.id_provinsi)
-				// getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-				// getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-				// getKelurahan(data.bahari.id_kecamatan,data.bahari.id_kelurahan)
+                elements = $('#editForm').find("[name!='']");
+                elements.each(function(idx) {
+                    el = $(this);
+                    field = el.attr('name');
+                    val = data.komcad[field];
+                    this.value=val;
+                    this.defaultValue=val;
+                })
 
-				if(data.bahari.flag_location == 'prov')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,0)
-					getKecamatan(0,0)
-					getKelurahan(0,0)
-				}
-				else if(data.bahari.flag_location == 'kab')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,0)
-					getKelurahan(0,0)
-				}
-				else if(data.bahari.flag_location == 'kec')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-					getKelurahan(data.bahari.id_kecamatan,0)
-				}
-				else if(data.bahari.flag_location == 'kel')
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-					getKelurahan(data.bahari.id_kecamatan,data.bahari.id_kelurahan)
-				}
-				else
-				{
-					getProvinsi(data.bahari.id_provinsi)
-					getKabupaten(data.bahari.id_provinsi,data.bahari.id_kabupaten)
-					getKecamatan(data.bahari.id_kabupaten,data.bahari.id_kecamatan)
-					getKelurahan(data.bahari.id_kecamatan,data.bahari.id_kelurahan)
-				}
+                $("#provinsi").trigger("change");
+                $("#kabupaten").trigger("change");
+                $("#kecamatan").trigger("change");
+
 			},
 			error: function (data) {
 				console.log(data);
@@ -769,46 +662,6 @@
 			$("#longitude").val(event.latLng.lng());
 		});
 	}
-
-	// function initMap() {
-	// 	map = new google.maps.Map(document.getElementById('map'), {
-	// 		center: {lat: -6.1755367, lng: 106.8273503},
-	// 		zoom: 6
-	// 	});
-	// 	infoWindow = new google.maps.InfoWindow;
-
-	// 	// Try HTML5 geolocation.
-	// 	if (navigator.geolocation) {
-	// 		navigator.geolocation.getCurrentPosition(function(position) {
-	// 			var pos = {
-	// 				lat: position.coords.latitude,
-	// 				lng: position.coords.longitude
-	// 			};
-
-	// 			marker = new google.maps.Marker({
-	// 				position: pos,
-	// 				map,
-	// 			});
-				
-	// 			$("#latitude").val(position.coords.latitude);
-	// 			$("#longitude").val(position.coords.longitude);
-				
-	// 			map.setCenter(pos);
-	// 		}, function() {
-	// 			handleLocationError(true, infoWindow, map.getCenter());
-	// 		});
-	// 	} else {
-	// 		// Browser doesn't support Geolocation
-	// 		handleLocationError(false, infoWindow, map.getCenter());
-	// 	}
-
-	// 	// even listner ketika peta diklik
-	// 	google.maps.event.addListener(map, 'click', function(event) {
-	// 		placeMarker(this, event.latLng);
-	// 		$("#latitude").val(event.latLng.lat());
-	// 		$("#longitude").val(event.latLng.lng());
-	// 	});
-	// }
 
 	function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 		infoWindow.setPosition(pos);
