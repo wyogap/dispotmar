@@ -79,10 +79,10 @@
 									</select>
 								</div>
 							</div> -->
-							<div class="col-md-4">
+							<div class="col-xl-4">
 								<div class="form-group row">
-									<label class="col-md-2 col-form-label">Satker </label>
-									<div class="col-md-10">
+									<label class="col-md-3 col-form-label">Satker </label>
+									<div class="col-md-9">
 										<?php if(($this->session->userdata('role') == 'Satker')): ?>
 											<input type="hidden" class="form-control" id="hiddensatker" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
 											<select class="form-control" id="satkerPicked" name="satkerPicked" disabled>
@@ -260,64 +260,92 @@
 				<div class="modal-body">
 					<div class="row">
 						<div class="col-lg-12 col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Satuan Kerja</label>
+                                <div class="col-md-9">
+                                    <?php if(($this->session->userdata('role') == 'Superadmin' || $this->session->userdata('role') == 'Admin Data' || $this->session->userdata('role') == 'Admin' || $this->session->userdata('role') == 'Admin Data Center')): ?>
+                                        <select class="form-control" id="satkerEdit" name="id_satker" style="width:100%;" tcg-type='input'>
+                                    <?php else: ?>
+                                        <input type="hidden" class="form-control" id="hiddensatker" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
+                                        <select class="form-control" id="satkerPicked" name="id_satker" tcg-type='input' disabled>
+                                    <?php endif ?>
+                                        <option value="">Pilih Satuan Kerja</option>
+                                        <?php foreach($satkers as $satker): ?>
+                                        <option value="<?= $satker->id_satker ?>"
+                                            <?= ($this->session->userdata('role') == 'Satker' && $satker->id_satker == $this->session->userdata('id_satker')) ? 'selected' : '' ?>>
+                                            <?= $satker->nama_satker ?>
+                                        </option>
+                                        <?php endforeach ?>
+                                    </select>
+                                    <div class="text-danger warning-satker"></div>
+                                </div>
+							</div>
 							<div class="form-group row">
-									<label class="col-md-3 col-form-label">Jenis Pelaporan</label>
-									<div class="col-md-9">
-										<select class="form-control" id="typeEdit" name="type" style="width:100%;">
-											<option value="">Pilih Kategori</option>
-											<?php foreach($categories as $cat): ?>
-											<option value="<?= $cat->id_activity_jenis ?>"><?= $cat->nama_jenis ?>
-											</option>
-											<?php endforeach ?>
-										</select>
-										<div class="text-danger warning-type"></div>
-									</div>
+                                <label class="col-md-3 col-form-label">Jenis Pelaporan</label>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <select class="form-control" id="typeEdit" name="id_activity_jenis" style="width:100%;" tcg-type='input'>
+                                                <option value="">Pilih Kategori</option>
+                                                <?php foreach($categories as $cat): ?>
+                                                <option value="<?= $cat->id_activity_jenis ?>"><?= $cat->nama_jenis ?>
+                                                </option>
+                                                <?php endforeach ?>
+                                            </select>
+                                            <div class="text-danger warning-type"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3" tcg-tag='subcategory' style="display: none;">
+                                        <div class="col-md-12">
+                                            <select class="form-control" id="id_activity_jenis2" name="id_activity_jenis2" style="width:100%;" data-placeholder='Sub-kategori' tcg-type='input'>
+                                                <option value="">Pilih Subkategori</option>
+                                            </select>
+                                            <div class="text-danger warning-id_activity_jenis2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3" tcg-tag="rekaptable" style="display: none;">
+                                        
+                                        <div class="col-md-12">
+                                            <select class="form-control" id="id_rekap_table" name="id_rekap_table" style="width:100%;" tcg-type='input'>
+                                                <option value="">Pilih Referensi</option>
+                                            </select>
+                                            <div class="text-danger warning-id_rekap_table"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3" tcg-tag="tags" style="display: none;">
+                                        <div class="col-md-12">
+                                            <select class="form-control" id="tags" name="tags" style="width:100%;" data-placeholder='Tags' tcg-type='input' multiple>
+                                            </select>
+                                            <div class="text-danger warning-tags"></div>
+                                        </div>
+                                    </div>									
+                                </div>
 							</div>
 							<div class="form-group row">
 									<label class="col-md-3 col-form-label">Siapa ?</label>
 									<div class="col-md-9">
-										<input type="text" id="whoEdit" name="who" class="form-control">
+										<input type="text" id="whoEdit" name="who" class="form-control" tcg-type='input'>
 										<div class="invalid-feedback warning-who"></div>
-									</div>
-							</div>
-							<div class="form-group row">
-									<label class="col-md-3 col-form-label">Satuan Kerja</label>
-									<div class="col-md-9">
-										<?php if(($this->session->userdata('role') == 'Superadmin' || $this->session->userdata('role') == 'Admin Data' || $this->session->userdata('role') == 'Admin' || $this->session->userdata('role') == 'Admin Data Center')): ?>
-											<select class="form-control" id="satkerEdit" name="satker" style="width:100%;">
-										<?php else: ?>
-											<input type="hidden" class="form-control" id="hiddensatker" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
-											<select class="form-control" id="satkerPicked" name="satkerPicked" disabled>
-										<?php endif ?>
-											<option value="">Pilih Satuan Kerja</option>
-											<?php foreach($satkers as $satker): ?>
-											<option value="<?= $satker->id_satker ?>"
-												<?= ($this->session->userdata('role') == 'Satker' && $satker->id_satker == $this->session->userdata('id_satker')) ? 'selected' : '' ?>>
-												<?= $satker->nama_satker ?>
-											</option>
-											<?php endforeach ?>
-										</select>
-										<div class="text-danger warning-satker"></div>
 									</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label">Apa ?</label>
 								<div class="col-md-9">
-									<input type="text" class="form-control" id="whatEdit" name="what" value="">
+									<input type="text" class="form-control" id="whatEdit" name="what" value="" tcg-type='input'>
 									<div class="invalid-feedback warning-what"></div>
 								</div>
 							</div>
 							<div class="form-group row">
 									<label class="col-md-3 col-form-label">Kapan?</label>
 									<div class="col-md-9">
-										<input type="text" class="form-control" name="date" id="datetimepicker1" placeholder="YYYY-MM-DD HH:ii:ss">
-										<div class="invalid-feedback warning-date"></div>
+										<input type="text" class="form-control" name="when" id="whenEdit" placeholder="YYYY-MM-DD HH:ii:ss" tcg-type='input'>
+										<div class="invalid-feedback warning-when"></div>
 									</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label">Dimana ?</label>
 								<div class="col-md-9">
-									<select class="form-control" id="provinsiEdit" name="provinsi" style="width:100%;">
+									<select class="form-control" id="provinsiEdit" name="id_provinsi" style="width:100%;" tcg-type='input'>
 										<option value="">Pilih Provinsi</option>
 										<?php foreach($provinsi as $prov): ?>
 										<option value="<?= $prov->id_geografi ?>"><?= $prov->nama ?></option>
@@ -329,7 +357,7 @@
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label"></label>
 								<div class="col-md-9">
-										<select class="form-control" id="kabupatenEdit" name="kabupaten" style="width:100%;">
+										<select class="form-control" id="kabupatenEdit" name="id_kabupaten" style="width:100%;" tcg-type='input'>
 											<option value="">Pilih Kabupaten</option>
 										</select>
 								</div>
@@ -337,7 +365,7 @@
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label"></label>
 								<div class="col-md-9">
-										<select class="form-control" id="kecamatanEdit" name="kecamatan" style="width:100%;">
+										<select class="form-control" id="kecamatanEdit" name="id_kecamatan" style="width:100%;" tcg-type='input'>
 											<option value="">Pilih Kecamatan</option>
 										</select>
 								</div>
@@ -345,16 +373,16 @@
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label"></label>
 								<div class="col-md-9">
-										<select class="form-control" id="kelurahanEdit" name="kelurahan" style="width:100%;">
+										<select class="form-control" id="kelurahanEdit" name="id_kelurahan" style="width:100%;" tcg-type='input'>
 											<option value="">Pilih Kelurahan</option>
 										</select>
-										<input type="text" id="flag_locationedit" name="flag_locationedit" style="display:none;" class="form-control">
+										<input type="text" id="flag_locationedit" name="flag_locationedit" style="display:none;" class="form-control" tcg-type='input'>
 								</div>
 							</div>
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label"></label>
 								<div class="col-md-9">
-									<input type="text" class="form-control" rows="2" id="whereEdit" name="where" placeholder="Detail Alamat">
+									<input type="text" class="form-control" rows="2" id="whereEdit" name="where" placeholder="Detail Alamat" tcg-type='input'>
 									<div class="invalid-feedback warning-where"></div>
 									<br>
 									<div class="form-group">
@@ -368,12 +396,12 @@
 													<div class="form-group col-md-6">
 														<label>Latitude</label>
 														<input type="text" id="latitudeEdit" name="latitude"
-															class="form-control" readonly>
+															class="form-control" tcg-type='input' readonly>
 													</div>
 													<div class="form-group col-md-6">
 														<label>Longitude</label>
 														<input type="text" id="longitudeEdit" name="longitude"
-															class="form-control" readonly>
+															class="form-control" tcg-type='input' readonly>
 													</div>
 												</div>
 												<div id="map" style="width:100%;height:380px;"></div>
@@ -384,21 +412,21 @@
 							<div class="form-group row">
 									<label class="col-md-3 col-form-label">Mengapa ?</label>
 									<div class="col-md-9">
-										<input type="text" class="form-control" rows="3" id="whyEdit" name="why">
+										<input type="text" class="form-control" rows="3" id="whyEdit" name="why" tcg-type='input'>
 										<div class="invalid-feedback warning-why"></div>
 									</div>
 							</div>
 							<div class="form-group row">
 									<label class="col-md-3 col-form-label">Bagaimana ?</label>
 									<div class="col-md-9">
-									<input type="text" class="form-control" rows="3" id="howEdit" name="how">
+									<input type="text" class="form-control" rows="3" id="howEdit" name="how" tcg-type='input'>
 										<div class="invalid-feedback warning-how"></div>
 									</div>
 							</div>
 							<div class="form-group row">
 									<label class="col-md-3 col-form-label">Catatan Penting</label>
 									<div class="col-md-9">
-									<input type="text" class="form-control" rows="6" id="notesEdit" name="notes">
+									<input type="text" class="form-control" rows="6" id="notesEdit" name="catatan_penting" tcg-type='input'>
 									</div>
 							</div>
 							<div class="form-group row">
@@ -425,24 +453,15 @@
 <script async="false"
 	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByRkCzDDjo-th8ecT72ZBN6f69RUmwt0I&callback=initMap"></script>
 <script>
+    var report = null;
+
+    var subcategories = <?= json_encode($subcategories, JSON_INVALID_UTF8_IGNORE); ?>;
+    var tags = <?= json_encode($tags, JSON_INVALID_UTF8_IGNORE); ?>;
+
 	$(document).ready(function () {
-		$("#satker").select2();
-		$("#typeEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#satkerEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#provinsiEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kabupatenEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kecamatanEdit").select2({
-			dropdownParent: $('#editModal')
-		});
-		$("#kelurahanEdit").select2({
+		// $("#satker").select2();
+
+		$("#editModal select").select2({
 			dropdownParent: $('#editModal')
 		});
 		
@@ -475,26 +494,42 @@
 			valueSatker =  $('#hiddensatker').val();
 		}
 
-		var formData = new FormData();
-		formData.append('csrf_al', $('input[name="csrf_al"]').val());
-		formData.append('id_activity_sosial', $('input[name="id_activity_sosial"]').val());
-		formData.append('type', $('#typeEdit').val());
-		formData.append('who', $('#whoEdit').val());
-		formData.append('satker', valueSatker);
-		formData.append('what', $('#whatEdit').val());
-		formData.append('provinsi', $('#provinsiEdit').val());
-		formData.append('kabupaten', $('#kabupatenEdit').val());
-		formData.append('kecamatan', $('#kecamatanEdit').val());
-		formData.append('kelurahan', $('#kelurahanEdit').val());
-		formData.append('where', $('#whereEdit').val());
-		formData.append('latitude', $('#latitudeEdit').val());
-		formData.append('longitude', $('#longitudeEdit').val());
-		formData.append('why', $('#whyEdit').val());
-		formData.append('how', $('#howEdit').val());
-		formData.append('notes', $('#notesEdit').val());
-		formData.append('gambar', $('#gambarEdit')[0].files[0]);
-		formData.append('date', $('#datetimepicker1').val());
-		formData.append('flag_locationedit', $('#flag_locationedit').val());
+		// var formData = new FormData();
+		// formData.append('csrf_al', $('input[name="csrf_al"]').val());
+		// formData.append('id_activity_sosial', $('input[name="id_activity_sosial"]').val());
+		// formData.append('type', $('#typeEdit').val());
+		// formData.append('who', $('#whoEdit').val());
+		// formData.append('satker', valueSatker);
+		// formData.append('what', $('#whatEdit').val());
+		// formData.append('provinsi', $('#provinsiEdit').val());
+		// formData.append('kabupaten', $('#kabupatenEdit').val());
+		// formData.append('kecamatan', $('#kecamatanEdit').val());
+		// formData.append('kelurahan', $('#kelurahanEdit').val());
+		// formData.append('where', $('#whereEdit').val());
+		// formData.append('latitude', $('#latitudeEdit').val());
+		// formData.append('longitude', $('#longitudeEdit').val());
+		// formData.append('why', $('#whyEdit').val());
+		// formData.append('how', $('#howEdit').val());
+		// formData.append('notes', $('#notesEdit').val());
+		// formData.append('date', $('#datetimepicker1').val());
+		// formData.append('flag_locationedit', $('#flag_locationedit').val());
+
+        // formData.append('gambar', $('#gambarEdit')[0].files[0]);
+
+        var frmData = new FormData();
+        elements = $('#editForm').find("[tcg-type='input']");
+        elements.each(function(idx, dom) {
+            el = $(dom);
+            field = el.attr('name');
+            val = el.val();
+            frmData.append(field, val);
+        })
+
+        fileInput = document.querySelector("#gambar");
+        if (fileInput.files.length > 0) {
+            frmData.append('gambar', fileInput.files[0]);
+        }
+
 		$.ajax({
 			type: "POST",
 			url: "form_pelaporan/update",
@@ -507,6 +542,8 @@
 				if (data[0].status == 0) {
 					$('input[name="csrf_al"]').val(data[0].csrf)
 					$.each(data[1], function (key, value) {
+                        if (value == null || value == '')   return;
+
 						$('.warning-' + key).html(value)
 						$('.warning-' + key).show()
 						if ($('#' + key + 'Edit').val() == '') {
@@ -525,77 +562,77 @@
 		return false;
 	});
 
-	$('#provinsi').change(function(){ 
-			var id= $(this).val();
-			if (id) {
-				$.ajax({
-					url : "<?= site_url() ?>/api/getKabupaten/"+id,
-					method : "GET",
-					async : true,
-					dataType : 'json',
-					success: function(data){
-						var html = '';
-						var i;
-						html += '<option value="">Pilih Kabupaten</option>';
-						for(i=0; i<data.length; i++){
-							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
-						}
-						$('#kabupaten').html(html);
-					}
-				});
-				return false;
-			} else {
-				$('#kabupaten').html('<option value="">Pilih Kabupaten</option>');
-			}
-	}); 
+	// $('#provinsi').change(function(){ 
+	// 		var id= $(this).val();
+	// 		if (id) {
+	// 			$.ajax({
+	// 				url : "<?= site_url() ?>/api/getKabupaten/"+id,
+	// 				method : "GET",
+	// 				async : true,
+	// 				dataType : 'json',
+	// 				success: function(data){
+	// 					var html = '';
+	// 					var i;
+	// 					html += '<option value="">Pilih Kabupaten</option>';
+	// 					for(i=0; i<data.length; i++){
+	// 						html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+	// 					}
+	// 					$('#kabupaten').html(html);
+	// 				}
+	// 			});
+	// 			return false;
+	// 		} else {
+	// 			$('#kabupaten').html('<option value="">Pilih Kabupaten</option>');
+	// 		}
+	// }); 
 
-	$('#kabupaten').change(function(){ 
-			var id= $(this).val();
-			if (id) {
-				$.ajax({
-					url : "<?= site_url() ?>/api/getKecamatan/"+id,
-					method : "GET",
-					async : true,
-					dataType : 'json',
-					success: function(data){
-						var html = '';
-						var i;
-						html += '<option value="">Pilih Kecamatan</option>';
-						for(i=0; i<data.length; i++){
-							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
-						}
-						$('#kecamatan').html(html);
-					}
-				});
-				return false;
-			} else {
-				$('#kecamatan').html('<option value="">Pilih Kecamatan</option>');
-			}
-	}); 
+	// $('#kabupaten').change(function(){ 
+	// 		var id= $(this).val();
+	// 		if (id) {
+	// 			$.ajax({
+	// 				url : "<?= site_url() ?>/api/getKecamatan/"+id,
+	// 				method : "GET",
+	// 				async : true,
+	// 				dataType : 'json',
+	// 				success: function(data){
+	// 					var html = '';
+	// 					var i;
+	// 					html += '<option value="">Pilih Kecamatan</option>';
+	// 					for(i=0; i<data.length; i++){
+	// 						html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+	// 					}
+	// 					$('#kecamatan').html(html);
+	// 				}
+	// 			});
+	// 			return false;
+	// 		} else {
+	// 			$('#kecamatan').html('<option value="">Pilih Kecamatan</option>');
+	// 		}
+	// }); 
 
-	$('#kecamatan').change(function(){ 
-			var id= $(this).val();
-			if (id) {
-				$.ajax({
-					url : "<?= site_url() ?>/api/getKelurahan/"+id,
-					method : "GET",
-					async : true,
-					dataType : 'json',
-					success: function(data){
-						var html = '';
-						var i;
-						html += '<option value="">Pilih Kelurahan</option>';
-						for(i=0; i<data.length; i++){
-							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
-						}
-						$('#kelurahan').html(html);
-					}
-				});
-				return false;
-			} else {
-				$('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
-			}
-	});
+	// $('#kecamatan').change(function(){ 
+	// 		var id= $(this).val();
+	// 		if (id) {
+	// 			$.ajax({
+	// 				url : "<?= site_url() ?>/api/getKelurahan/"+id,
+	// 				method : "GET",
+	// 				async : true,
+	// 				dataType : 'json',
+	// 				success: function(data){
+	// 					var html = '';
+	// 					var i;
+	// 					html += '<option value="">Pilih Kelurahan</option>';
+	// 					for(i=0; i<data.length; i++){
+	// 						html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
+	// 					}
+	// 					$('#kelurahan').html(html);
+	// 				}
+	// 			});
+	// 			return false;
+	// 		} else {
+	// 			$('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
+	// 		}
+	// });
 
 	$('#provinsiEdit').change(function(){ 
 			var id= $(this).val();
@@ -614,9 +651,15 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kabupatenEdit').html(html);
+                        let field = $('#kabupatenEdit');
+						field.html(html);
+                        //set value
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
+	
 						$('#kecamatanEdit').html('<option value="">Pilih Kecamatan</option>');
 						$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
+
 					}
 				});
 				return false;
@@ -649,7 +692,12 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kecamatanEdit').html(html);
+                        let field = $('#kecamatanEdit');
+						field.html(html);
+                        //set value
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
+
 						$('#kelurahanEdit').html('<option value="">Pilih Kelurahan</option>');
 					}
 				});
@@ -683,7 +731,12 @@
 						for(i=0; i<data.length; i++){
 							html += '<option value='+data[i].id_geografi+'>'+data[i].nama+'</option>';
 						}
-						$('#kelurahanEdit').html(html);
+
+                        let field = $('#kelurahanEdit');
+						field.html(html);
+                        //set value
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
 					}
 				});
 				return false;
@@ -723,9 +776,179 @@
 		}
 	});
 
-	// $('#pinLocation').on('click', function () {
-	// 	$('.map-view').toggle()
-	// });
+    $("#typeEdit").on("change", function() {
+        var id= $(this).val();
+
+        if (id == '') {
+            $("[tcg-tag='subcategory']").hide();
+            $("[tcg-tag='rekaptable']").hide();
+            $("[tcg-tag='tags']").hide();
+            return;
+        }
+
+        //populate subcategory (if any)
+        vsubcategories = [];
+        for (i=0; i<subcategories.length; i++) {
+            s = subcategories[i];
+            if (s.id_parent == id) {
+                vsubcategories.push(s);
+            }
+        }
+
+        if (vsubcategories.length > 0) {
+            //populate the satker select
+            el = $("#id_activity_jenis2");
+            let val = el.val()
+            el.empty();
+
+            if (val == null) {
+                val = '';
+            }
+
+            let _option = $("<option>").val('').text('-- Pilih sub-kategori --');
+            el.append(_option);
+            for (i=0; i<vsubcategories.length; i++) {
+                let s = vsubcategories[i];
+
+                _option = $("<option>").val(s.id_activity_jenis).text(s.nama_jenis);
+                el.append(_option);
+            }
+
+            //reset the value
+            //el.val(val).trigger("change");
+            val = el.attr("defaultValue");
+            el.val( val ).trigger("change");
+
+            $("[tcg-tag='subcategory']").show();
+        }
+        else {
+            $("[tcg-tag='subcategory']").hide();
+        }
+
+        //populate tags (if any)
+        vtags = [];
+        for (i=0; i<tags.length; i++) {
+            s = tags[i];
+            if (s.id_activity_jenis == id) {
+                vtags.push(s);
+            }
+        }
+
+        if (vtags.length > 0) {
+            //populate the satker select
+            el = $("#tags");
+            let val = el.val()
+            el.empty();
+
+            for (i=0; i<vtags.length; i++) {
+                let s = vtags[i];
+
+                let _option = $("<option>").val(s.tag).text(s.label);
+                el.append(_option);
+            }
+
+            //reset the value
+            val = el.attr("defaultValue");
+            el.val( val ).trigger("change");
+
+            $("[tcg-tag='tags']").show();
+        }
+        else {
+            $("[tcg-tag='tags']").hide();
+        }
+
+        //get rekap_table (if any)
+        $.ajax({
+            url : "<?= site_url() ?>/api/getPelaporanRekapTable/"+id,
+            method : "GET",
+            async : true,
+            dataType : 'json',
+            success: function(json){
+                if (json.data !== undefined && json.data != null && json.data.length > 0) {
+                    var html = '';
+                    var i;
+                    html += '<option value="">Pilih ' +json['label']+ '</option>';
+                    for(i=0; i<json.data.length; i++){
+                        html += '<option value='+json.data[i].value+'>'+json.data[i].label+'</option>';
+                    }
+                    $('#id_rekap_table').html(html);
+                    //show
+                    $("[tcg-tag='rekaptable']").show();
+                }
+                else {
+                    //hide
+                    $("[tcg-tag='rekaptable']").hide();
+                }
+            }
+        });
+    });
+
+    $("#id_activity_jenis2").on("change", function() {
+        var id= $(this).val();
+
+        if (id == '') {
+            $("[tcg-tag='rekaptable']").hide();
+            $("[tcg-tag='tags']").hide();
+            return;
+        }
+
+        //populate tags (if any)
+        vtags = [];
+        for (i=0; i<tags.length; i++) {
+            s = tags[i];
+            if (s.id_activity_jenis == id) {
+                vtags.push(s);
+            }
+        }
+
+        if (vtags.length > 0) {
+            //populate the satker select
+            el = $("#tags");
+            let val = el.val()
+            el.empty();
+
+            for (i=0; i<vtags.length; i++) {
+                let s = vtags[i];
+
+                let _option = $("<option>").val(s.tag).text(s.label);
+                el.append(_option);
+            }
+
+            //reset the value
+            el.val(val);
+
+            $("[tcg-tag='tags']").show();
+
+        }
+        else {
+            $("[tcg-tag='tags']").hide();
+        }
+
+        //get rekap_table
+        $.ajax({
+            url : "<?= site_url() ?>/api/getPelaporanRekapTable/"+id,
+            method : "GET",
+            async : true,
+            dataType : 'json',
+            success: function(json){
+                if (json.data !== undefined && json.data != null && json.data.length > 0) {
+                    var html = '';
+                    var i;
+                    html += '<option value="">Pilih ' +json['label']+ '</option>';
+                    for(i=0; i<json.data.length; i++){
+                        html += '<option value='+json.data[i].value+'>'+json.data[i].label+'</option>';
+                    }
+                    $('#id_rekap_table').html(html);
+                    //show
+                    $("[tcg-tag='rekaptable']").show();
+                }
+                else {
+                    //hide
+                    $("[tcg-tag='rekaptable']").hide();
+                }
+            }
+        });
+    });
 
 	});
 </script>
@@ -758,74 +981,133 @@
 				// 	$('.map-view').toggle()
 				// }
 				
-				$('select[name=type]').find('option:selected').removeAttr('selected');
-				$('select[name=satker]').find('option:selected').removeAttr('selected');
-				$('select[name=provinsi]').find('option:selected').removeAttr('selected');
-				$('select[name=kabupaten]').find('option:selected').removeAttr('selected');
-				$('select[name=kecamatan]').find('option:selected').removeAttr('selected');
-				$('select[name=kelurahan]').find('option:selected').removeAttr('selected');
-				$('input[name="id_activity_sosial"]').val(id);
-				$('input[name="what"]').val(data.report.what);
-				$('input[name="who"]').val(data.report.who);
-				$('input[name="where"]').val(data.report.where);
-				$('input[name="latitude"]').val(data.report.latitude);
-				$('input[name="longitude"]').val(data.report.longitude);
-				$('input[name="why"]').val(data.report.why);
-				$('input[name="how"]').val(data.report.how);
-				$('input[name="notes"]').val(data.report.catatan_penting);
-				$('input[name="date"]').val(data.report.when);
-				$('input[name="flag_locationedit"]').val(data.report.flag_location);
+				// $('select[name=type]').find('option:selected').removeAttr('selected');
+				// $('select[name=satker]').find('option:selected').removeAttr('selected');
+				// $('select[name=provinsi]').find('option:selected').removeAttr('selected');
+				// $('select[name=kabupaten]').find('option:selected').removeAttr('selected');
+				// $('select[name=kecamatan]').find('option:selected').removeAttr('selected');
+				// $('select[name=kelurahan]').find('option:selected').removeAttr('selected');
+				// $('input[name="id_activity_sosial"]').val(id);
+				// $('input[name="what"]').val(data.report.what);
+				// $('input[name="who"]').val(data.report.who);
+				// $('input[name="where"]').val(data.report.where);
+				// $('input[name="latitude"]').val(data.report.latitude);
+				// $('input[name="longitude"]').val(data.report.longitude);
+				// $('input[name="why"]').val(data.report.why);
+				// $('input[name="how"]').val(data.report.how);
+				// $('input[name="notes"]').val(data.report.catatan_penting);
+				// $('input[name="date"]').val(data.report.when);
+				// $('input[name="flag_locationedit"]').val(data.report.flag_location);
 				
-				//$("select[name=type] option[value="+data.report.id_activity_jenis+"]").attr('selected','selected');
-				//$("select[name=satker] option[value="+data.report.id_satker+"]").attr('selected','selected');
-				//$("select[name=provinsi] option[value="+data.report.id_provinsi+"]").attr('selected','selected');
-				$("#typeEdit").val(data.report.id_activity_jenis);
-				$("#satkerEdit").val(data.report.id_satker);
-				$("#provinsiEdit").val(data.report.id_provinsi);
-				$('input[name="oldImage"]').val(data.report.gambar);
-				$('#imagePreview').attr('src',`<?= base_url();?>/uploads/reports/`+data.report.gambar);
-				$("#typeEdit").trigger('change');
-				$("#satkerEdit").trigger('change');
-				// $("#provinsiEdit").trigger('change');
-				// $("#kabupatenEdit").trigger('change');
-				// $("#kecamatanEdit").trigger('change');
-				// $("#kelurahanEdit").trigger('change');
+				// //$("select[name=type] option[value="+data.report.id_activity_jenis+"]").attr('selected','selected');
+				// //$("select[name=satker] option[value="+data.report.id_satker+"]").attr('selected','selected');
+				// //$("select[name=provinsi] option[value="+data.report.id_provinsi+"]").attr('selected','selected');
+				// $("#typeEdit").val(data.report.id_activity_jenis);
+				// $("#satkerEdit").val(data.report.id_satker);
+				// $("#provinsiEdit").val(data.report.id_provinsi);
+				// $('input[name="oldImage"]').val(data.report.gambar);
+				// $('#imagePreview').attr('src',`<?= base_url();?>/uploads/reports/`+data.report.gambar);
+				// $("#typeEdit").trigger('change');
+				// $("#satkerEdit").trigger('change');
+				// // $("#provinsiEdit").trigger('change');
+				// // $("#kabupatenEdit").trigger('change');
+				// // $("#kecamatanEdit").trigger('change');
+				// // $("#kelurahanEdit").trigger('change');
 
-				if(data.report.flag_location == 'prov')
-				{
-					getProvinsi(data.report.id_provinsi)
-					getKabupaten(data.report.id_provinsi,0)
-					getKecamatan(0,0)
-					getKelurahan(0,0)
-				}
-				else if(data.report.flag_location == 'kab')
-				{
-					getProvinsi(data.report.id_provinsi)
-					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
-					getKecamatan(data.report.id_kabupaten,0)
-					getKelurahan(0,0)
-				}
-				else if(data.report.flag_location == 'kec')
-				{
-					getProvinsi(data.report.id_provinsi)
-					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
-					getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
-					getKelurahan(data.report.id_kecamatan,0)
-				}
-				else if(data.report.flag_location == 'kel')
-				{
-					getProvinsi(data.report.id_provinsi)
-					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
-					getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
-					getKelurahan(data.report.id_kecamatan,data.report.id_kelurahan)
-				}
-				else
-				{
-					getProvinsi(data.report.id_provinsi)
-					getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
-					getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
-					getKelurahan(data.report.id_kecamatan,data.report.id_kelurahan)
-				}
+				// if(data.report.flag_location == 'prov')
+				// {
+				// 	getProvinsi(data.report.id_provinsi)
+				// 	getKabupaten(data.report.id_provinsi,0)
+				// 	getKecamatan(0,0)
+				// 	getKelurahan(0,0)
+				// }
+				// else if(data.report.flag_location == 'kab')
+				// {
+				// 	getProvinsi(data.report.id_provinsi)
+				// 	getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+				// 	getKecamatan(data.report.id_kabupaten,0)
+				// 	getKelurahan(0,0)
+				// }
+				// else if(data.report.flag_location == 'kec')
+				// {
+				// 	getProvinsi(data.report.id_provinsi)
+				// 	getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+				// 	getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
+				// 	getKelurahan(data.report.id_kecamatan,0)
+				// }
+				// else if(data.report.flag_location == 'kel')
+				// {
+				// 	getProvinsi(data.report.id_provinsi)
+				// 	getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+				// 	getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
+				// 	getKelurahan(data.report.id_kecamatan,data.report.id_kelurahan)
+				// }
+				// else
+				// {
+				// 	getProvinsi(data.report.id_provinsi)
+				// 	getKabupaten(data.report.id_provinsi,data.report.id_kabupaten)
+				// 	getKecamatan(data.report.id_kabupaten,data.report.id_kecamatan)
+				// 	getKelurahan(data.report.id_kecamatan,data.report.id_kelurahan)
+				// }
+
+                report = data.report;
+
+                elements = $('#editForm').find("[tcg-type='input']");
+                elements.each(function(idx) {
+                    el = $(this);
+                    field = el.attr('name');
+                    val = data.report[field];
+                    el.val(val);
+                    el.attr("defaultValue",val);
+                })
+
+                val = $("#satkerEdit").val();
+                $("#satkerEdit").trigger("change");
+                $("#typeEdit").trigger("change");
+                $("#whenEdit").trigger("change");
+                $("#whatEdit").trigger("change");
+                $("#provinsiEdit").trigger("change");
+
+                // val = $("#id_activity_jenis2").val();
+                // if (val != null && val != '') {
+                //     $("[tcg-tag='subcategory']").show();
+                // }
+                // else {
+                //     $("[tcg-tag='subcategory']").hide();
+                // }
+
+                // val = $("#id_rekap_table").val();
+                // if (val != null && val != '') {
+                //     $("[tcg-tag='rekaptable']").show();
+                // }
+                // else {
+                //     $("[tcg-tag='rekaptable']").hide();
+                // }
+
+                // val = $("#tags").val();
+                // if (val != null && val != '') {
+                //     $("[tcg-tag='tags']").show();
+                // }
+                // else {
+                //     $("[tcg-tag='tags']").hide();
+                // }
+
+                //dropify
+                if (data.report["gambar"] != null && data.report["gambar"] != '') {
+                    let img = "<?= site_url() ?>" +data.report["gambar"];
+
+                    // Get dropify instance
+                    var dropify = $("#gambarEdit").data('dropify');
+
+                    // Reset current preview
+                    dropify.resetPreview();
+                    dropify.clearElement();
+
+                    // Set new default file and re-init the dropify element
+                    dropify.settings.defaultFile = img;
+                    dropify.destroy();
+                    dropify.init();
+                }
 
 				initMap(data.report.latitude, data.report.longitude, 2);
 			},

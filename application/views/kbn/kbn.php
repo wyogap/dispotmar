@@ -44,7 +44,8 @@
 								<th>Kecamatan</th>
 								<th>Kabupaten/Kota</th>
 								<th>Provinsi</th>
-								<th>Deskripsi</th>
+								<th>Tanggal Mulai</th>
+								<th>Tanggal Selesai</th>
 								<th>Nama Tertua Desa</th>
 								<th>Nama Ketua Pelaksana</th>
 								<th>Updated By</th>
@@ -76,7 +77,8 @@
 									<td><?= $kbn->nama_kecamatan ?></td>
 									<td><?= $kbn->nama_kabupaten ?></td>
 									<td><?= $kbn->nama_provinsi ?></td>
-									<td><?= $kbn->deskripsi ?></td>
+									<td><?= $kbn->tgl_mulai ?></td>
+									<td><?= $kbn->tgl_selesai ?></td>
 									<td><?= $kbn->nama_tertua_desa ?></td>
 									<td><?= $kbn->nama_ketua_pelaksana ?></td>
 									<td><?= $kbn->updated_by ?></td>
@@ -106,8 +108,8 @@
 				</button>
 			</div>
 			<form class="form-horizontal" method="POST" id="editForm" tcg-mode="edit">
-                <input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>">
-                <input type="hidden" name="id_kbn" value="">
+                <input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>" tcg-type='input'>
+                <input type="hidden" name="id_kbn" value="" tcg-type='input'>
 				<div class="modal-body">
 					<div class="row">
 						<div class="col-lg-12 col-md-12">
@@ -115,10 +117,10 @@
 								<label class="col-md-3 col-form-label">Satker </label>
 								<div class="col-md-9">
 									<?php if(($this->session->userdata('role') == 'Satker')): ?>
-										<input type="hidden" class="form-control" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
-										<select class="form-control" id="satkerPicked" name="satkerPicked" disabled>
+										<input type="hidden" class="form-control" name="id_satker" value="<?= $this->session->userdata('id_satker') ?>" tcg-type='input'>
+										<select class="form-control" id="satkerPicked" name="satkerPicked" disabled tcg-type='input'>
 									<?php else: ?>
-										<select class="form-control" id="satker" name="satker" style="width: 100%;">
+										<select class="form-control" id="id_satker" name="id_satker" style="width: 100%;" tcg-type='input'>
 									<?php endif ?>
 										<option value="">Pilih Satuan Kerja</option>
 										<?php foreach($satkers as $satker): ?>
@@ -131,12 +133,12 @@
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label">Klaster </label>
 								<div class="col-md-9">
-                                    <select class="form-control" id="klaster" name="klater" style="width: 100%;" multiple>
-										<option value="Edukasi">Edukasi</option>
-										<option value="Ekonomi">Ekonomi</option>
-										<option value="Kesehatan">Kesehatan</option>
-										<option value="Pariwisata">Pariwisata</option>
-										<option value="Pertahanan">Pertahanan</option>
+                                    <select class="form-control" id="klaster" name="klaster" style="width: 100%;" tcg-type='input' multiple>
+										<option value="edukasi">Edukasi</option>
+										<option value="ekonomi">Ekonomi</option>
+										<option value="kesehatan">Kesehatan</option>
+										<option value="pariwisata">Pariwisata</option>
+										<option value="pertahanan">Pertahanan</option>
 									</select>
 									<div class="text-danger warning-klaster"></div>
 								</div>
@@ -144,7 +146,7 @@
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="nama">Nama KBN</label>
 								<div class="col-md-9">
-									<input type="text" id="nama" name="nama" class="form-control">
+									<input type="text" id="nama" name="nama" class="form-control" tcg-type='input'>
 									<div class="invalid-feedback warning-nama"></div>
 								</div>
 							</div>
@@ -153,7 +155,7 @@
 								<div class="col-md-9">
                                     <div class="row">
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="provinsi" name="provinsi" style="width: 100%;">
+										<select class="form-control" id="provinsi" name="id_provinsi" style="width: 100%;" tcg-type='input' >
 											<option value="">Pilih Provinsi</option>
 											<?php foreach($provinsi as $prov): ?>
 											<option value="<?= $prov->id_geografi ?>"><?= $prov->nama ?></option>
@@ -162,17 +164,17 @@
 										<div class="text-danger warning-provinsi"></div>
 									</div>
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="kabupaten" name="kabupaten" style="width: 100%;">
+										<select class="form-control" id="kabupaten" name="id_kabupaten" style="width: 100%;" tcg-type='input'>
 											<option value="">Pilih Kabupaten</option>
 										</select>
 									</div>
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="kecamatan" name="kecamatan" style="width: 100%;">
+										<select class="form-control" id="kecamatan" name="id_kecamatan" style="width: 100%;" tcg-type='input'>
 											<option value="">Pilih Kecamatan</option>
 										</select>
 									</div>
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="kelurahan" name="kelurahan" style="width: 100%;">
+										<select class="form-control" id="kelurahan" name="id_kelurahan" style="width: 100%;" tcg-type='input'>
 											<option value="">Pilih Kelurahan</option>
 										</select>
 										<input type="text" id="flag_location" name="flag_location" style="display:none;" class="form-control">
@@ -187,11 +189,11 @@
                                     <div class="col-md-12">NB : Silahkan klik di peta <b>(<i class="fa fa-map-marker"></i>)</b> untuk perubahan data koordinat.</div>
                                     <div class="col-md-6">
                                         <label class="col-form-label" for="latitude">Lintang</label>
-                                        <input type="text" id="latitude" name="latitude" class="form-control">
+                                        <input type="text" id="latitude" name="latitude" class="form-control" tcg-type='input'>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="col-form-label" for="latitude">Bujur</label>
-                                        <input type="text" id="longitude" name="longitude" class="form-control">
+                                        <input type="text" id="longitude" name="longitude" class="form-control" tcg-type='input'>
                                     </div>
                                     </div>
                                 </div>
@@ -203,31 +205,31 @@
 									<div class="invalid-feedback warning-deskripsi"></div>
 								</div>
 							</div>
-							<div class="form-group row" tcg-allow-edit=0 tcg-allow-add=0>
-								<label class="col-md-3 col-form-label" for="tanggal_mulai">Tanggal Mulai</label>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="tgl_mulai">Tanggal Mulai</label>
 								<div class="col-md-9">
-									<input type="text" id="" name="tanggal_mulai" class="form-control">
-									<div class="invalid-feedback warning-tanggal_mulai"></div>
+									<input type="date" id="" name="tgl_mulai" class="form-control" tcg-type='input'>
+									<div class="invalid-feedback warning-tgl_mulai"></div>
 								</div>
 							</div>
-							<div class="form-group row" tcg-allow-edit=0 tcg-allow-add=0>
-								<label class="col-md-3 col-form-label" for="tanggal_selesai">Tanggal Selesai</label>
+							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
+								<label class="col-md-3 col-form-label" for="tgl_selesai">Tanggal Selesai</label>
 								<div class="col-md-9">
-									<input type="text" id="" name="tanggal_selesai" class="form-control">
-									<div class="invalid-feedback warning-tanggal_selesai"></div>
+									<input type="date" id="" name="tgl_selesai" class="form-control" tcg-type='input'>
+									<div class="invalid-feedback warning-tgl_selesai"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="nama_tertua_desa">Nama Tertua Desa</label>
 								<div class="col-md-9">
-									<input type="text" id="" name="nama_tertua_desa" class="form-control">
+									<input type="text" id="" name="nama_tertua_desa" class="form-control" tcg-type='input'>
 									<div class="text-danger warning-nama_tertua_desa"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="nama_ketua_pelaksana">Nama Ketua Pelaksana</label>
 								<div class="col-md-9">
-									<input type="text" id="" name="nama_ketua_pelaksana" class="form-control">
+									<input type="text" id="" name="nama_ketua_pelaksana" class="form-control" tcg-type='input'>
 									<div class="text-danger warning-nama_ketua_pelaksana"></div>
 								</div>
 							</div>
@@ -297,8 +299,10 @@
 			$('.warning-' + name).html('')
 		});
 
-		$('#editForm').submit(function () {
-            let mode = $(this).getAttr("tcg-mode");
+		$('#editForm').submit(function (e) {
+            e.preventDefault();
+
+            let mode = $(this).attr("tcg-mode");
             if (mode == null) {
                 mode == 'edit';
             }
@@ -308,17 +312,37 @@
                 url = "<?= site_url() ?>kbn/store";
             }
 
+            frmData = new FormData();
+            elements = $('#editForm').find("[tcg-type='input']");
+            elements.each(function(idx, dom) {
+                el = $(dom);
+                field = el.attr('name');
+                val = el.val();
+                frmData.append(field, val);
+            })
+
+            fileInput = document.querySelector("#gambar_sampul");
+            if (fileInput.files.length > 0) {
+                frmData.append('gambar_sampul', fileInput.files[0]);
+            }
+
 			$.ajax({
 				type: "POST",
 				url: url,
 				dataType: "json",
-				data: $(this).serialize(),
+				data: frmData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                timeout: 60000,
 				success: function (data) {
 					if (data[0].status == 0) {
 						$('input[name="csrf_al"]').val(data[0].csrf)
 						$.each(data[1], function (key, value) {
-							$('input[name="' + key + '"]').addClass('is-invalid')
-							$('.warning-' + key).html(value)
+                            if (value != null && value != '') {
+                                $('input[name="' + key + '"]').addClass('is-invalid')
+							    $('.warning-' + key).html(value)
+                            }
 						});
 					} else {
 						location.reload(true);
@@ -367,7 +391,8 @@
                         let field = $('#kabupaten');
 						field.html(html);
                         //set value
-                        field.val( field.attr("defaultValue") );
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
 					}
 				});
 				return false;
@@ -395,7 +420,8 @@
                         let field = $('#kecamatan');
 						field.html(html);
                         //set value
-                        field.val( field.attr("defaultValue") );
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
 					}
 				});
 				return false;
@@ -423,7 +449,8 @@
                         let field = $('#kelurahan');
 						field.html(html);
                         //set value
-                        field.val( field.attr("defaultValue") );
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
 					}
 				});
 				return false;
@@ -531,6 +558,7 @@
 
     function tambahData() {
         $('#editModal').modal();
+        $('#editForm').attr('tcg-mode', 'add');
 
         $("#editForm").find("[tcg-allow-add=1]").show();
         $("#editForm").find("[tcg-allow-add=0]").hide();
@@ -538,6 +566,7 @@
 
 	function editModal(id) {
 		$('#editModal').modal();
+        $('#editForm').attr('tcg-mode', 'edit');
 
         $("#editForm").find("[tcg-allow-edit=1]").show();
         $("#editForm").find("[tcg-allow-edit=0]").hide();
@@ -554,19 +583,44 @@
 
                 kbn = data.kbn;
 
-                elements = $('#editForm').find("[name!='']");
-                elements.each(function(idx) {
-                    el = $(this);
+                elements = $('#editForm').find("[tcg-type='input']");
+                elements.each(function(idx, dom) {
+                    el = $(dom);
                     field = el.attr('name');
-                    val = data.komcad[field];
-                    this.value=val;
-                    this.defaultValue=val;
+                    if (field == 'gambar_sampul') {
+                        return;
+                    }
+                    else if (field == 'klaster' && data.kbn[field] != null) {
+                        val = data.kbn[field].split(",");
+                    } else {
+                        val = data.kbn[field];
+                    }
+                    el.val(val);
+                    el.attr("defaultValue",val);
                 })
 
+                $("#id_satker").trigger("change");
+                $("#klaster").trigger("change");
                 $("#provinsi").trigger("change");
-                $("#kabupaten").trigger("change");
-                $("#kecamatan").trigger("change");
 
+                //dropify
+                if (data.kbn["gambar_sampul"] != null && data.kbn["gambar_sampul"] != '') {
+                    let img = "<?= site_url() ?>" +data.kbn["gambar_sampul"];
+
+                    // Get dropify instance
+                    var dropify = $("#gambar_sampul").data('dropify');
+
+                    // Reset current preview
+                    dropify.resetPreview();
+                    dropify.clearElement();
+
+                    // Set new default file and re-init the dropify element
+                    dropify.settings.defaultFile = img;
+                    dropify.destroy();
+                    dropify.init();
+                }
+
+                //create marker
 			},
 			error: function (data) {
 				console.log(data);

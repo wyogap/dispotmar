@@ -10,20 +10,24 @@ class KomcadController extends CI_Controller {
 		$this->load->model('komcad/Komcad', 'komcad');
 		$this->load->model('SatuanKerja', 'satker');
 		$this->load->model('Geografi','geo');
+		$this->load->model('JenisAgama','agama');
+		$this->load->model('JenisSuku','suku');
     }
 
     public function index()
 	{
 		$this->data['title'] = 'Rekap - Komponen Cadangan';
 
-		if (policy('DEMO','read')) {
+		if (policy('KOMCAD','read')) {
 			$this->data['dataKomcad'] = $this->komcad->getBySatker($this->session->userdata('id_satker'));
-		}else if (policy('DEMO','read_all')){
+		}else if (policy('KOMCAD','read_all')){
 			$this->data['dataKomcad'] = $this->komcad->get();
 		}
 
 		$this->data['satkers'] = $this->satker->get();
 		$this->data['provinsi'] = $this->geo->getLevel(1);
+		$this->data['agama'] = $this->agama->get();
+		$this->data['suku_bangsa'] = $this->suku->get();
 
 		$data['isi'] = $this->load->view('komcad/komcad', $this->data, true);
 		$this->load->view('skin/layout', $data);
@@ -31,31 +35,33 @@ class KomcadController extends CI_Controller {
 
 	public function show($id)
 	{
-		if (!policy('DEMO','update')) show_404();
+		if (!policy('KOMCAD','update')) show_404();
 
 		$this->data['komcad'] = $this->komcad->find($id);
 		echo json_encode($this->data);
 	}
 
 	public function store(){
-		if (!policy('DEMO','create')) show_404();
+		if (!policy('KOMCAD','create')) show_404();
 
 		$this->form_validation->set_rules('id_satker', 'Satuan Kerja', 'trim|integer|required');
 		$this->form_validation->set_rules('nama', 'Nama Komcad', 'trim|required');
 		$this->form_validation->set_rules('tempat_lahir', 'Tempat Lahir', 'trim|required');
 		$this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'trim|required');
+		$this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'trim|required');
 		$this->form_validation->set_rules('pangkat', 'Pangkat', 'trim|required');
-		$this->form_validation->set_rules('nomor_induk_komcat', 'Nomor Induk Komcad', 'trim|required');
+		$this->form_validation->set_rules('golongan_pangkat', 'Golongan Pangkat', 'trim|required');
+		$this->form_validation->set_rules('nomor_induk_komcad', 'Nomor Induk Komcad', 'trim|required');
 		$this->form_validation->set_rules('pendidikan', 'Pendidikan', 'trim|required');
 		$this->form_validation->set_rules('tmt_penetapan', 'Tanggal Penetapan', 'trim|required');
-		$this->form_validation->set_rules('nomor_telp', 'Nomor Telp', 'trim|numeric');
+		$this->form_validation->set_rules('nomor_telp', 'Nomor Telp', 'trim|required|numeric');
 		$this->form_validation->set_rules('email', 'Email', 'trim|valid_email');
-		$this->form_validation->set_rules('id_agama', 'Agama', 'trim|integer');
-		$this->form_validation->set_rules('id_suku_bangsa', 'Suku Bangsa', 'trim|integer');
-		$this->form_validation->set_rules('id_kelurahan', 'Desa/Kelurahan', 'trim|integer');
-		$this->form_validation->set_rules('id_kecamatan', 'Kecamatan', 'trim|integer');
-		$this->form_validation->set_rules('id_kabupaten', 'Kabupaten', 'trim|integer');
-		$this->form_validation->set_rules('id_provinsi', 'Provinsi', 'trim|integer');
+		$this->form_validation->set_rules('id_agama', 'Agama', 'trim');
+		$this->form_validation->set_rules('id_suku_bangsa', 'Suku Bangsa', 'trim');
+		$this->form_validation->set_rules('id_kelurahan', 'Desa/Kelurahan', 'trim');
+		$this->form_validation->set_rules('id_kecamatan', 'Kecamatan', 'trim');
+		$this->form_validation->set_rules('id_kabupaten', 'Kabupaten', 'trim');
+		$this->form_validation->set_rules('id_provinsi', 'Provinsi', 'trim');
 		$this->form_validation->set_rules('alamat_ktp', 'Alamat KTP', 'trim|required');
 		$this->form_validation->set_rules('latitude', 'Lintang', 'trim|numeric');
 		$this->form_validation->set_rules('longitude', 'Bujur', 'trim|numeric');
@@ -68,8 +74,10 @@ class KomcadController extends CI_Controller {
 				'nama' 			    => form_error('nama'),
 				'tempat_lahir' 		=> form_error('tempat_lahir'),
 				'tanggal_lahir' 	=> form_error('tanggal_lahir'),
+				'jenis_kelamin' 	=> form_error('jenis_kelamin'),
 				'pangkat' 		    => form_error('pangkat'),
-				'nomor_induk_komcad' 	=> form_error('nomor_induk_komcat'),
+				'golongan_pangkat' 		    => form_error('golongan_pangkat'),
+				'nomor_induk_komcad' 	=> form_error('nomor_induk_komcad'),
 				'pendidikan' 	    => form_error('pendidikan'),
 				'tmt_penetapan' 	=> form_error('tmt_penetapan'),
 				'nomor_telp' 		=> form_error('nomor_telp'),
@@ -88,16 +96,18 @@ class KomcadController extends CI_Controller {
 			echo json_encode([$status,$response]);
 		}else{
 			$data = array(
-				'id_satker'		=> $this->input->post('satker'),
+				'id_satker'		=> $this->input->post('id_satker'),
 				'nama'	        => $this->input->post('nama'),
 				'tempat_lahir'	=> $this->input->post('tempat_lahir'),
 				'tanggal_lahir'	=> $this->input->post('tanggal_lahir'),
+				'jenis_kelamin'	=> $this->input->post('jenis_kelamin'),
 				'pangkat'	    => $this->input->post('pangkat'),
+				'golongan_pangkat'	    => $this->input->post('golongan_pangkat'),
 				'nomor_induk_komcad'	=> $this->input->post('nomor_induk_komcad'),
 				'pendidikan'	=> $this->input->post('pendidikan'),
 				'tmt_penetapan'	=> $this->input->post('tmt_penetapan'),
 				'nomor_telp'	=> $this->input->post('nomor_telp'),
-				'email'	        => $this->session->userdata('email'),
+				'email'	        => $this->input->post('email'),
 				'id_agama'	    => $this->input->post('id_agama'),
 				'id_suku_bangsa'	=> $this->input->post('id_suku_bangsa'),
 				'id_kelurahan'	=> $this->input->post('id_kelurahan'),
@@ -107,11 +117,18 @@ class KomcadController extends CI_Controller {
 				'alamat_ktp'	=> $this->input->post('alamat_ktp'),
 				'latitude'	    => $this->input->post('latitude'),
 				'longitude'	    => $this->input->post('longitude'),
-				'foto'	        => $this->input->post('foto'),
                 'is_active'     => 1,
                 'created_date'  => date('Y-m-d H:i:s'),
                 'created_by'    => $this->session->userdata('id_user'),
 			);
+
+            //insert gambar-sampul kalau perlu
+            if (!empty($_FILES['foto'])) {
+                $gambar = $this->komcad->do_upload('foto');
+                if (!empty($gambar)) {
+                    $data['foto'] = $gambar;
+                }
+            }
 
 			if ($this->komcad->create($data)) {
 				$this->session->set_flashdata('success', 'Data anda berhasil disimpan');
@@ -121,24 +138,26 @@ class KomcadController extends CI_Controller {
 	}
 
 	public function update(){
-		if (!policy('DEMO','update')) show_404();
+		if (!policy('KOMCAD','update')) show_404();
 
 		$this->form_validation->set_rules('id_satker', 'Satuan Kerja', 'trim|integer|required');
 		$this->form_validation->set_rules('nama', 'Nama Komcad', 'trim|required');
 		$this->form_validation->set_rules('tempat_lahir', 'Tempat Lahir', 'trim|required');
 		$this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'trim|required');
+		$this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'trim|required');
 		$this->form_validation->set_rules('pangkat', 'Pangkat', 'trim|required');
-		$this->form_validation->set_rules('nomor_induk_komcat', 'Nomor Induk Komcad', 'trim|required');
+		$this->form_validation->set_rules('golongan_pangkat', 'Golongan Pangkat', 'trim|required');
+		$this->form_validation->set_rules('nomor_induk_komcad', 'Nomor Induk Komcad', 'trim|required');
 		$this->form_validation->set_rules('pendidikan', 'Pendidikan', 'trim|required');
 		$this->form_validation->set_rules('tmt_penetapan', 'Tanggal Penetapan', 'trim|required');
 		$this->form_validation->set_rules('nomor_telp', 'Nomor Telp', 'trim|numeric');
 		$this->form_validation->set_rules('email', 'Email', 'trim|valid_email');
-		$this->form_validation->set_rules('id_agama', 'Agama', 'trim|integer');
-		$this->form_validation->set_rules('id_suku_bangsa', 'Suku Bangsa', 'trim|integer');
-		$this->form_validation->set_rules('id_kelurahan', 'Desa/Kelurahan', 'trim|integer');
-		$this->form_validation->set_rules('id_kecamatan', 'Kecamatan', 'trim|integer');
-		$this->form_validation->set_rules('id_kabupaten', 'Kabupaten', 'trim|integer');
-		$this->form_validation->set_rules('id_provinsi', 'Provinsi', 'trim|integer');
+		$this->form_validation->set_rules('id_agama', 'Agama', 'trim');
+		$this->form_validation->set_rules('id_suku_bangsa', 'Suku Bangsa', 'trim');
+		$this->form_validation->set_rules('id_kelurahan', 'Desa/Kelurahan', 'trim');
+		$this->form_validation->set_rules('id_kecamatan', 'Kecamatan', 'trim');
+		$this->form_validation->set_rules('id_kabupaten', 'Kabupaten', 'trim');
+		$this->form_validation->set_rules('id_provinsi', 'Provinsi', 'trim');
 		$this->form_validation->set_rules('alamat_ktp', 'Alamat KTP', 'trim|required');
 		$this->form_validation->set_rules('latitude', 'Lintang', 'trim|numeric');
 		$this->form_validation->set_rules('longitude', 'Bujur', 'trim|numeric');
@@ -151,8 +170,10 @@ class KomcadController extends CI_Controller {
 				'nama' 			    => form_error('nama'),
 				'tempat_lahir' 		=> form_error('tempat_lahir'),
 				'tanggal_lahir' 	=> form_error('tanggal_lahir'),
+				'jenis_kelamin' 	=> form_error('jenis_kelamin'),
 				'pangkat' 		    => form_error('pangkat'),
-				'nomor_induk_komcad' 	=> form_error('nomor_induk_komcat'),
+				'golongan_pangkat' 		    => form_error('golongan_pangkat'),
+				'nomor_induk_komcad' 	=> form_error('nomor_induk_komcad'),
 				'pendidikan' 	    => form_error('pendidikan'),
 				'tmt_penetapan' 	=> form_error('tmt_penetapan'),
 				'nomor_telp' 		=> form_error('nomor_telp'),
@@ -171,16 +192,18 @@ class KomcadController extends CI_Controller {
 			echo json_encode([$status,$response]);
 		}else{
 			$data = array(
-				'id_satker'		=> $this->input->post('satker'),
+				'id_satker'		=> $this->input->post('id_satker'),
 				'nama'	        => $this->input->post('nama'),
 				'tempat_lahir'	=> $this->input->post('tempat_lahir'),
 				'tanggal_lahir'	=> $this->input->post('tanggal_lahir'),
+				'jenis_kelamin'	=> $this->input->post('jenis_kelamin'),
 				'pangkat'	    => $this->input->post('pangkat'),
+				'golongan_pangkat'	    => $this->input->post('golongan_pangkat'),
 				'nomor_induk_komcad'	=> $this->input->post('nomor_induk_komcad'),
 				'pendidikan'	=> $this->input->post('pendidikan'),
 				'tmt_penetapan'	=> $this->input->post('tmt_penetapan'),
 				'nomor_telp'	=> $this->input->post('nomor_telp'),
-				'email'	        => $this->session->userdata('email'),
+				'email'	        => $this->input->post('email'),
 				'id_agama'	    => $this->input->post('id_agama'),
 				'id_suku_bangsa'	=> $this->input->post('id_suku_bangsa'),
 				'id_kelurahan'	=> $this->input->post('id_kelurahan'),
@@ -190,12 +213,19 @@ class KomcadController extends CI_Controller {
 				'alamat_ktp'	=> $this->input->post('alamat_ktp'),
 				'latitude'	    => $this->input->post('latitude'),
 				'longitude'	    => $this->input->post('longitude'),
-				'foto'	        => $this->input->post('foto'),
 				'updated_by'	=> $this->session->userdata('id_user'),
 				'updated_date'	=> date('Y-m-d H:i:s')
 			);
 
-			$id = $this->input->post('id');
+            //insert gambar-sampul kalau perlu
+            if (!empty($_FILES['foto'])) {
+                $gambar = $this->komcad->do_upload('foto');
+                if (!empty($gambar)) {
+                    $data['foto'] = $gambar;
+                }
+            }
+
+            $id = $this->input->post('id_komcad');
 
 			if ($this->komcad->update($id,$data)) {
 				$this->session->set_flashdata('success', 'Data anda berhasil disimpan');
@@ -206,7 +236,7 @@ class KomcadController extends CI_Controller {
 
 	public function delete($id=null)
     {
-		if (!policy('DEMO','delete')) show_404();
+		if (!policy('KOMCAD','delete')) show_404();
 
 		if (!isset($id)) show_404();
 
@@ -218,4 +248,90 @@ class KomcadController extends CI_Controller {
 			redirect_back();
 		}
     }
+
+    public function dashboard() {
+		$this->data['title'] = 'Peta Sebaran Komponen Cadangan';
+        $kotamas = $this->satker->getKotama();
+        $satkers = $this->satker->getSatkerBukanKotama();
+        $this->data['kotamas'] = $kotamas;
+        $this->data['satkers'] = $satkers;
+        $komcad = $this->komcad->get();
+        $this->data['komcad'] = $komcad;
+
+		$data['isi'] = $this->load->view('komcad/dashboard', $this->data, true);
+		$this->load->view('skin/layout', $data);
+    }
+
+    public function pelaporan() {
+        $this->data['title'] = 'Pelaporan Komcad';
+
+		$this->data['satkers'] = $this->satker->get();
+		$this->data['satkerRank'] = $this->komcad->getRankSatker();
+		$this->data['personelRank'] = $this->komcad->getRankPersonel();
+		$this->data['getRankCriminals'] = $this->komcad->getRankCriminals();
+		
+		$config['base_url'] = site_url().'komcad/pelaporan';
+
+		if (policy('KOMCAD','read')) {
+			$config['total_rows'] = $this->komcad->getReportCount($this->session->userdata('id_satker'), null, null);
+		}else if (policy('KOMCAD','read_all')){
+			$config['total_rows'] = $this->komcad->getReportCount();
+		}
+		
+		$config['per_page'] = 10;
+		$config['first_link']       = 'First';
+        $config['last_link']        = 'Last';
+        $config['next_link']        = 'Next';
+        $config['prev_link']        = 'Prev';
+        $config['full_tag_open']    = '<div class="pagging text-center"><nav><ul class="pagination justify-content-center">';
+        $config['full_tag_close']   = '</ul></nav></div>';
+        $config['num_tag_open']     = '<li class="page-item"><span class="page-link">';
+        $config['num_tag_close']    = '</span></li>';
+        $config['cur_tag_open']     = '<li class="page-item active"><span class="page-link">';
+        $config['cur_tag_close']    = '<span class="sr-only">(current)</span></span></li>';
+        $config['next_tag_open']    = '<li class="page-item"><span class="page-link">';
+        $config['next_tagl_close']  = '<span aria-hidden="true">&raquo;</span></span></li>';
+        $config['prev_tag_open']    = '<li class="page-item"><span class="page-link">';
+        $config['prev_tagl_close']  = '</span>Next</li>';
+        $config['first_tag_open']   = '<li class="page-item"><span class="page-link">';
+        $config['first_tagl_close'] = '</span></li>';
+        $config['last_tag_open']    = '<li class="page-item"><span class="page-link">';
+        $config['last_tagl_close']  = '</span></li>';
+		$this->pagination->initialize($config);
+		
+		$data['isi'] = $this->load->view('komcad/pelaporan', $this->data, true);
+		$this->load->view('skin/layout', $data);
+    }
+
+    public function getKomcadActivity($offset)
+	{
+        $offset = intval($offset);
+		if ($offset == 0) {
+			$offset = 1;
+		}
+		
+		if (policy('KOMCAD','read')) {
+			$activities = $this->komcad->getReport($this->session->userdata('id_satker'),10,$offset);
+		}else if (policy('KOMCAD','read_all')){
+			// $activities = $this->report->getDataPagination(null,10,$offset);
+			$activities = $this->komcad->getReport(null,10,$offset);
+		}
+		
+		echo json_encode($activities);
+	}
+
+	public function getKomcadActivityBySatker($idsatker)
+	{
+		$result = $this->komcad->getReportBySatker($idsatker);
+		
+		echo json_encode($result);
+	}
+
+	public function getKomcadActivityByPersonel($iduser)
+	{
+		$result = $this->komcad->getReportByPersonel($iduser);
+		
+		echo json_encode($result);
+	}   
+
 }

@@ -1,3 +1,9 @@
+<style>
+    .select2 .select2-selection {
+        min-height: 38px;
+    }
+</style>
+
 <div class="section">
 
 	<!-- Page-header opened -->
@@ -26,9 +32,9 @@
 									<label class="col-md-3 col-form-label">Satuan Kerja</label>
 									<div class="col-md-9">
 										<?php if(($this->session->userdata('role') == 'Superadmin' || $this->session->userdata('role') == 'Admin Data' || $this->session->userdata('role') == 'Admin' || $this->session->userdata('role') == 'Admin Data Center')): ?>
-											<select class="form-control" id="satker" name="satker" style="width:100%;">
+											<select class="form-control" id="satker" name="id_satker" style="width:100%;">
 										<?php else: ?>
-											<input type="hidden" class="form-control" id="hiddensatker" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
+											<input type="hidden" class="form-control" id="hiddensatker" name="id_satker" value="<?= $this->session->userdata('id_satker') ?>">
 											<select class="form-control" id="satkerPicked" name="satkerPicked" disabled style="width:100%;">
 										<?php endif ?>
 											<option value="">Pilih Satuan Kerja</option>
@@ -47,7 +53,7 @@
 									<div class="col-md-9">
                                         <div class="row">
 											<div class="col-md-12">
-                                                <select class="form-control" id="id_activity_jenis" name="id_activity_jenis" style="width:100%;">
+                                                <select class="form-control" id="id_activity_jenis" name="id_activity_jenis" style="width:100%;" data-placeholder='Kategori'>
                                                     <option value="">Pilih Kategori</option>
                                                     <?php foreach($categories as $cat): ?>
                                                     <option value="<?= $cat->id_activity_jenis ?>"><?= $cat->nama_jenis ?>
@@ -57,15 +63,16 @@
                                                 <div class="text-danger warning-id_activity_jenis"></div>
                                             </div>
                                         </div>
-                                        <div class="row" tcg-tag='subcategory' style="display: none;">
+                                        <div class="row mt-3" tcg-tag='subcategory' style="display: none;">
                                             <div class="col-md-12">
-                                                <select class="form-control" id="id_activity_jenis2" name="id_activity_jenis2" style="width:100%;">
+                                                <select class="form-control" id="id_activity_jenis2" name="id_activity_jenis2" style="width:100%;" data-placeholder='Sub-kategori'>
                                                     <option value="">Pilih Subkategori</option>
                                                 </select>
                                                 <div class="text-danger warning-id_activity_jenis2"></div>
                                             </div>
                                         </div>
-                                        <div class="row" tcg-tag="rekaptable" style="display: none;">
+                                        <div class="row mt-3" tcg-tag="rekaptable" style="display: none;">
+                                            
                                             <div class="col-md-12">
                                                 <select class="form-control" id="id_rekap_table" name="id_rekap_table" style="width:100%;">
                                                     <option value="">Pilih Referensi</option>
@@ -73,9 +80,9 @@
                                                 <div class="text-danger warning-id_rekap_table"></div>
                                             </div>
                                         </div>
-                                        <div class="row" tcg-tag="tags" style="display: none;">
+                                        <div class="row mt-3" tcg-tag="tags" style="display: none;">
                                             <div class="col-md-12">
-                                                <select class="form-control" id="tags" name="tags" style="width:100%;" multiple>
+                                                <select class="form-control" id="tags" name="tags" style="width:100%;" data-placeholder='Tags' multiple>
                                                 </select>
                                                 <div class="text-danger warning-tags"></div>
                                             </div>
@@ -246,6 +253,9 @@
 
 </script> -->
 <script>
+    var subcategories = <?= json_encode($subcategories, JSON_INVALID_UTF8_IGNORE); ?>;
+    var tags = <?= json_encode($tags, JSON_INVALID_UTF8_IGNORE); ?>;
+
 	$(document).ready(function () {
 		$("select").select2();
 
@@ -274,18 +284,21 @@
 
 			if($('#hiddensatker').val() == undefined)
 			{
-				valueSatker =$('select[name="satker"]').val();
+				valueSatker = $('select[name="id_satker"]').val();
 			}
 			else if($('#hiddensatker').val() != undefined)
 			{
-				valueSatker =  $('#hiddensatker').val();
+				valueSatker = $('#hiddensatker').val();
 			}
 
 			var formData = new FormData();
 			formData.append('csrf_al', $('input[name="csrf_al"]').val());
-			formData.append('type', $('select[name="type"]').val());
+			formData.append('id_satker', valueSatker);
+			formData.append('id_activity_jenis', $('select[name="id_activity_jenis"]').val());
+			formData.append('id_activity_jenis2', $('select[name="id_activity_jenis2"]').val());
+			formData.append('id_rekap_table', $('select[name="id_rekap_table"]').val());
+			formData.append('tags', $('select[name="tags"]').val());
 			formData.append('who', $('input[name="who"]').val());
-			formData.append('satker', valueSatker);
 			formData.append('what', $('#what').val());
 			formData.append('date', $('input[name="date"]').val());
 			formData.append('provinsi', $('#provinsi').val());
@@ -301,6 +314,7 @@
 			formData.append('flag_location', $('#flag_location').val());
 			// Attach file
 			formData.append('gambar', $('#gambar')[0].files[0]); 
+
 			$.ajax({
 				type: "POST",
 				url: "form_pelaporan/store",
@@ -313,9 +327,11 @@
 						$('input[name="csrf_al"]').val(data[0].csrf)
 						$.each(data[1], function (key, value) {
 							$('#' + key).addClass('is-invalid')
-							$('input[name="' + key + '"]').addClass('is-invalid')
-							$('textarea[name="' + key + '"]').addClass('is-invalid')
-							$('.warning-' + key).html(value)
+                            if (value != null && value != '') {
+                                $('input[name="' + key + '"]').addClass('is-invalid')
+                                $('textarea[name="' + key + '"]').addClass('is-invalid')
+                                $('.warning-' + key).html(value)
+                            }
 						});
 						$('#submitButton').show()
 						$('#loadingButton').hide()
@@ -478,38 +494,83 @@
 			var id= $(this).val();
 
             if (id == '') {
-                $("tcg-tag='subcategory'").hide();
-                $("tcg-tag='rekaptable'").hide();
-                $("tcg-tag='tags'").hide();
+                $("[tcg-tag='subcategory']").hide();
+                $("[tcg-tag='rekaptable']").hide();
+                $("[tcg-tag='tags']").hide();
                 return;
             }
 
-            //get subcategory
-            $.ajax({
-                url : "<?= site_url() ?>/api/getPelaporanSubcategory/"+id,
-                method : "GET",
-                async : true,
-                dataType : 'json',
-                success: function(json){
-                    if (json.data !== undefined && json.data != null && json.data.length > 0) {
-                        var html = '';
-                        var i;
-                        html += '<option value="">Pilih Sub Kategori</option>';
-                        for(i=0; i<json.data.length; i++){
-                            html += '<option value='+json.data[i].id_activity_jenis+'>'+json.data[i].nama_jenis+'</option>';
-                        }
-                        $('#id_activity_jenis2').html(html);
-                        //show
-                        $("tcg-tag='subcategory'").show();
-                    }
-                    else {
-                        //hide
-                        $("tcg-tag='subcategory'").hide();
-                    }
+            //populate subcategory (if any)
+            vsubcategories = [];
+            for (i=0; i<subcategories.length; i++) {
+                s = subcategories[i];
+                if (s.id_parent == id) {
+                    vsubcategories.push(s);
                 }
-            });
+            }
 
-            //get rekap_table
+            if (vsubcategories.length > 0) {
+                //populate the satker select
+                el = $("#id_activity_jenis2");
+                let val = el.val()
+                el.empty();
+
+                if (val == null) {
+                    val = '';
+                }
+
+                let _option = $("<option>").val('').text('-- Pilih sub-kategori --');
+                el.append(_option);
+                for (i=0; i<vsubcategories.length; i++) {
+                    let s = vsubcategories[i];
+
+                    _option = $("<option>").val(s.id_activity_jenis).text(s.nama_jenis);
+                    el.append(_option);
+                }
+
+                //reset the value
+                el.val(val);
+                el.select2();
+
+                $("[tcg-tag='subcategory']").show();
+            }
+            else {
+                $("[tcg-tag='subcategory']").hide();
+            }
+
+            //populate tags (if any)
+            vtags = [];
+            for (i=0; i<tags.length; i++) {
+                s = tags[i];
+                if (s.id_activity_jenis == id) {
+                    vtags.push(s);
+                }
+            }
+
+            if (vtags.length > 0) {
+                //populate the satker select
+                el = $("#tags");
+                let val = el.val()
+                el.empty();
+
+                for (i=0; i<vtags.length; i++) {
+                    let s = vtags[i];
+
+                    let _option = $("<option>").val(s.tag).text(s.label);
+                    el.append(_option);
+                }
+
+                //reset the value
+                el.val(val);
+                el.select2();
+
+                $("[tcg-tag='tags']").show();
+            }
+            else {
+                $("[tcg-tag='tags']").hide();
+            }
+
+            //get rekap_table (if any)
             $.ajax({
                 url : "<?= site_url() ?>/api/getPelaporanRekapTable/"+id,
                 method : "GET",
@@ -521,39 +582,15 @@
                         var i;
                         html += '<option value="">Pilih ' +json['label']+ '</option>';
                         for(i=0; i<json.data.length; i++){
-                            html += '<option value='+json.data[i].id+'>'+json.data[i].nama+'</option>';
+                            html += '<option value='+json.data[i].value+'>'+json.data[i].label+'</option>';
                         }
                         $('#id_rekap_table').html(html);
                         //show
-                        $("tcg-tag='rekaptable'").show();
+                        $("[tcg-tag='rekaptable']").show();
                     }
                     else {
                         //hide
-                        $("tcg-tag='rekaptable'").hide();
-                    }
-                }
-            });
-
-            //get tags
-            $.ajax({
-                url : "<?= site_url() ?>/api/getPelaporanTags/"+id,
-                method : "GET",
-                async : true,
-                dataType : 'json',
-                success: function(json){
-                    if (json.data !== undefined && json.data != null && json.data.length > 0) {
-                        var html = '';
-                        var i;
-                        for(i=0; i<json.data.length; i++){
-                            html += '<option value='+json.data[i].tag+'>'+json.data[i].label+'</option>';
-                        }
-                        $('#tags').html(html);
-                        //show
-                        $("tcg-tag='tags'").show();
-                    }
-                    else {
-                        //hide
-                        $("tcg-tag='tags'").hide();
+                        $("[tcg-tag='rekaptable']").hide();
                     }
                 }
             });
@@ -563,9 +600,42 @@
 			var id= $(this).val();
 
             if (id == '') {
-                $("tcg-tag='rekaptable'").hide();
-                $("tcg-tag='tags'").hide();
+                $("[tcg-tag='rekaptable']").hide();
+                $("[tcg-tag='tags']").hide();
                 return;
+            }
+
+            //populate tags (if any)
+            vtags = [];
+            for (i=0; i<tags.length; i++) {
+                s = tags[i];
+                if (s.id_activity_jenis == id) {
+                    vtags.push(s);
+                }
+            }
+
+            if (vtags.length > 0) {
+                //populate the satker select
+                el = $("#tags");
+                let val = el.val()
+                el.empty();
+
+                for (i=0; i<vtags.length; i++) {
+                    let s = vtags[i];
+
+                    let _option = $("<option>").val(s.tag).text(s.label);
+                    el.append(_option);
+                }
+
+                //reset the value
+                el.val(val);
+                el.select2();
+
+                $("[tcg-tag='tags']").show();
+
+            }
+            else {
+                $("[tcg-tag='tags']").hide();
             }
 
             //get rekap_table
@@ -580,39 +650,15 @@
                         var i;
                         html += '<option value="">Pilih ' +json['label']+ '</option>';
                         for(i=0; i<json.data.length; i++){
-                            html += '<option value='+json.data[i].id+'>'+json.data[i].nama+'</option>';
+                            html += '<option value='+json.data[i].value+'>'+json.data[i].label+'</option>';
                         }
                         $('#id_rekap_table').html(html);
                         //show
-                        $("tcg-tag='rekaptable'").show();
+                        $("[tcg-tag='rekaptable']").show();
                     }
                     else {
                         //hide
-                        $("tcg-tag='rekaptable'").hide();
-                    }
-                }
-            });
-
-            //get tags
-            $.ajax({
-                url : "<?= site_url() ?>/api/getPelaporanTags/"+id,
-                method : "GET",
-                async : true,
-                dataType : 'json',
-                success: function(json){
-                    if (json.data !== undefined && json.data != null && json.data.length > 0) {
-                        var html = '';
-                        var i;
-                        for(i=0; i<json.data.length; i++){
-                            html += '<option value='+json.data[i].tag+'>'+json.data[i].label+'</option>';
-                        }
-                        $('#tags').html(html);
-                        //show
-                        $("tcg-tag='tags'").show();
-                    }
-                    else {
-                        //hide
-                        $("tcg-tag='tags'").hide();
+                        $("[tcg-tag='rekaptable']").hide();
                     }
                 }
             });

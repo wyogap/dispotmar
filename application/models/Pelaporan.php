@@ -220,6 +220,8 @@ class Pelaporan extends CI_Model
 
         $this->db->where('A.is_active',1);
 		$this->db->order_by('A.id_activity_sosial', 'DESC');
+        //echo $this->db->get_compiled_select(); exit;
+
 		$query = $this->db->get();
 
 		return $query->result();
@@ -368,8 +370,24 @@ class Pelaporan extends CI_Model
 	
     public function categories()
     {
+        $this->db->where('id_level',1);
         $this->db->where('is_active',1);
+        $this->db->order_by("sequence asc, id_activity_jenis");
         return $this->db->get('mst_activity_jenis')->result();
+    }
+
+    public function subcategories()
+    {
+        $this->db->where('id_level',2);
+        $this->db->where('is_active',1);
+        $this->db->order_by("sequence asc, id_activity_jenis");
+        return $this->db->get('mst_activity_jenis')->result();
+    }
+
+    public function tags()
+    {
+        $this->db->where('is_active',1);
+        return $this->db->get('mst_activity_tag')->result();
     }
 
     public function create($data)
@@ -422,4 +440,24 @@ class Pelaporan extends CI_Model
 				return "null.jpg";
 			}
 	}
+
+    function getPelaporanRekapTable($id_activity_jenis) {
+        $sql = "select * from mst_activity_rekap_table a where a.is_active=1 and a.id_activity_jenis=?";
+        $result = $this->db->query($sql, array($id_activity_jenis))->row_array();
+        if($result == null) return null;
+
+        $label = $result['label'];
+
+        $sql = "select " .$result['kolom_value']. " as value, " .$result['kolom_label']. " as label from " .$result['nama_table']. " where is_active=1";
+        if (!empty($result['where_clause'])) {
+            $sql .= " AND (" .$result['where_clause']. ")";
+        }
+        $rekap = $this->db->query($sql)->result_array();
+        if ($rekap == null)     return null;
+
+        $result = array();
+        $result[$label] = $rekap;
+
+        return $result;
+    }
 }

@@ -119,6 +119,20 @@
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/multi/multi.min.css">
 
 	<style>
+        /* Important part */
+        .modal-dialog{
+            overflow-y: initial !important
+        }
+
+        .modal-body{
+            height: 80vh;
+            overflow-y: auto;
+        }
+
+        .select2-selection {
+            min-height: 41px;
+        }
+        
 		.dropbtn {
 			background-color: #4CAF50;
 			color: white;
@@ -440,11 +454,11 @@
 							<li><a class="slide-item" href="<?= site_url()?>dashboard4"><span>Personel dan
 										Lahan</span></a>
 							</li>
-							<li><a class="slide-item" href="<?= site_url()?>dashboard_kbn"><span>Kampung Bahari Nusantara</span></a>
+							<li><a class="slide-item" href="<?= site_url()?>kbn/dashboard"><span>Kampung Bahari Nusantara</span></a>
 							</li>
-							<li><a class="slide-item" href="<?= site_url()?>dashboard_komcad"><span>Komcad / Komduk</span></a>
+							<li><a class="slide-item" href="<?= site_url()?>komcad/dashboard"><span>Komcad / Komduk</span></a>
 							</li>
-							<li><a class="slide-item" href="<?= site_url()?>dashboard_sakabahari"><span>Saka Bahari</span></a>
+							<li><a class="slide-item" href="<?= site_url()?>sakabahari/dashboard"><span>Saka Bahari</span></a>
 							</li>
 							<li><a class="slide-item" href="<?= site_url()?>dashboard5"><span>Pelaporan
 										Babinpotmar</span></a>
@@ -503,12 +517,12 @@
 								class="side-menu__label">Kampung Bahari Nusantara</span><i
 								class="angle fa fa-angle-right"></i></a>
 						<ul class="slide-menu">
-							<li><a href="<?= site_url()?>data_kbn" id="data_kbn" class="slide-item">Data KBN</a></li>
-							<li><a href="<?= site_url()?>klaster_edukasi" class="slide-item">Klaster Edukasi</a></li>
-							<li><a href="<?= site_url()?>klaster_ekonomi" class="slide-item">Klaster Ekonomi</a></li>
-							<li><a href="<?= site_url()?>klaster_kesehatan" class="slide-item">Klaster Kesehatan</a></li>
-							<li><a href="<?= site_url()?>klaster_pariwisata" id="klaster_pariwisata" class="slide-item">Klaster Pariwisata</a></li>
-							<li><a href="<?= site_url()?>klaster_pertahanan" id="klaster_pertahanan" class="slide-item">Klaster Pertahanan</a></li>
+							<li><a href="<?= site_url()?>kbn" id="data_kbn" class="slide-item">Data KBN</a></li>
+							<li><a href="<?= site_url()?>kbn/edukasi" class="slide-item">Klaster Edukasi</a></li>
+							<li><a href="<?= site_url()?>kbn/ekonomi" class="slide-item">Klaster Ekonomi</a></li>
+							<li><a href="<?= site_url()?>kbn/kesehatan" class="slide-item">Klaster Kesehatan</a></li>
+							<li><a href="<?= site_url()?>kbn/pariwisata" id="klaster_pariwisata" class="slide-item">Klaster Pariwisata</a></li>
+							<li><a href="<?= site_url()?>kbn/pertahanan" id="klaster_pertahanan" class="slide-item">Klaster Pertahanan</a></li>
 						</ul>
 					</li>
 					<li class="slide">
@@ -518,8 +532,8 @@
 								class="side-menu__label">Komcad / Komduk</span><i
 								class="angle fa fa-angle-right"></i></a>
 						<ul class="slide-menu">
-							<li><a href="<?= site_url()?>data_komcad" id="data_komcad" class="slide-item">Data Komcad</a></li>
-							<li><a href="<?= site_url()?>pelaporan_komcad" class="slide-item">Laporan Kegiatan</a></li>
+							<li><a href="<?= site_url()?>komcad" id="data_komcad" class="slide-item">Data Komcad</a></li>
+							<li><a href="<?= site_url()?>komcad/pelaporan" class="slide-item">Laporan Kegiatan</a></li>
 						</ul>
 					</li>
 					<li class="slide">
@@ -529,8 +543,8 @@
 								class="side-menu__label">Saka Bahari</span><i
 								class="angle fa fa-angle-right"></i></a>
 						<ul class="slide-menu">
-							<li><a href="<?= site_url()?>data_sakabahari" id="data_sakabahari" class="slide-item">Data Saka Bahari</a></li>
-							<li><a href="<?= site_url()?>pelaporan_sakabahari" class="slide-item">Laporan Kegiatan</a></li>
+							<li><a href="<?= site_url()?>sakabahari" id="data_sakabahari" class="slide-item">Data Saka Bahari</a></li>
+							<li><a href="<?= site_url()?>sakabahari/pelaporan" class="slide-item">Laporan Kegiatan</a></li>
 						</ul>
 					</li>
 

@@ -18,6 +18,8 @@ class PelaporanController extends CI_Controller
 		$this->data['satkers'] = $this->satker->get();
 		$this->data['provinsi'] = $this->geo->getLevel(1);
 		$this->data['categories'] = $this->report->categories();
+		$this->data['subcategories'] = $this->report->subcategories();
+		$this->data['tags'] = $this->report->tags();
 		$this->data['getsummarydatatahun'] = $this->report->getsummarydatatahun();
 
 		if (policy('LAPHAR','read')) {
@@ -81,6 +83,8 @@ class PelaporanController extends CI_Controller
 		$this->data['title'] = 'Form Laporan';
 		$this->data['satkers'] = $this->satker->get();
 		$this->data['categories'] = $this->report->categories();
+		$this->data['subcategories'] = $this->report->subcategories();
+		$this->data['tags'] = $this->report->tags();
 		$this->data['provinsi'] = $this->geo->getLevel(1);
 
 		// $this->load->library('googlemaps');
@@ -96,8 +100,8 @@ class PelaporanController extends CI_Controller
 	public function store(){
 		if (!policy('LAPHAR','create')) show_404();
 
-		$this->form_validation->set_rules('type', 'Jenis Aktivitas', 'trim|required');
-		$this->form_validation->set_rules('satker', 'Satker', 'trim|required');
+		$this->form_validation->set_rules('id_activity_jenis', 'Jenis Aktivitas', 'trim|required');
+		$this->form_validation->set_rules('id_satker', 'Satker', 'trim|required');
 		$this->form_validation->set_rules('who', 'Nama', 'trim|required');
 		$this->form_validation->set_rules('what', 'Apa', 'trim|required');
 		$this->form_validation->set_rules('date', 'Tanggal', 'trim|required');
@@ -110,9 +114,9 @@ class PelaporanController extends CI_Controller
 		if ($this->form_validation->run() == FALSE) {
 			$status = ['status' => 0, 'csrf' => $this->security->get_csrf_hash()];
 			$response = [
-				'type'  	=> form_error('type'),
+				'id_activity_jenis'  	=> form_error('id_activity_jenis'),
+				'id_satker'	=> form_error('id_satker'),
 				'who' 		=> form_error('who'),
-				'satker'	=> form_error('satker'),
 				'what' 		=> form_error('what'),
 				'date' 		=> form_error('date'),
 				'where' 	=> form_error('where'),
@@ -124,15 +128,17 @@ class PelaporanController extends CI_Controller
 			echo json_encode([$status,$response]);
 		}else{
 			$data = array(
-				'id_satker'			=> $this->input->post('satker'),
-				'id_activity_jenis'	=> $this->input->post('type'),
+				'id_satker'			=> $this->input->post('id_satker'),
+				'id_activity_jenis'	    => $this->input->post('id_activity_jenis'),
+				'id_activity_jenis2'	=> $this->input->post('id_activity_jenis2'),
+				'id_rekap_table'	=> $this->input->post('id_rekap_table'),
+				'tags'	            => $this->input->post('tags'),
 				'who'				=> $this->input->post('who'),
 				'what'				=> $this->input->post('what'),
 				'where'				=> $this->input->post('where'),
 				'when'				=> $this->input->post('date'),
 				'why'				=> $this->input->post('why'),
 				'how'				=> $this->input->post('how'),
-				'gambar'			=> $this->report->do_upload(),
 				'catatan_penting'	=> $this->input->post('notes'),
 				'latitude'			=> $this->input->post('latitude'),
 				'longitude'			=> $this->input->post('longitude'),
@@ -141,6 +147,14 @@ class PelaporanController extends CI_Controller
 				'created_by'		=> $this->session->userdata('id_user'),
 				'created_date'		=> date('Y-m-d H:i:s')
 			);
+
+            //insert gambar-sampul kalau perlu
+            if (!empty($_FILES['gambar'])) {
+                $gambar = $this->report->do_upload('');
+                if (!empty($gambar)) {
+                    $data['gambar'] = $gambar;
+                }
+            }			
 
 			if ($this->input->post('kelurahan')) {
 				$data['id_geografi'] = $this->input->post('kelurahan');
@@ -209,14 +223,14 @@ class PelaporanController extends CI_Controller
     {
 		if (!policy('LAPHAR','update')) show_404();
 
-		$this->form_validation->set_rules('satker', 'Satuan Kerja', 'trim|required');
+		$this->form_validation->set_rules('id_activity_jenis', 'Jenis Aktivitas', 'trim|required');
+		$this->form_validation->set_rules('id_satker', 'Satuan Kerja', 'trim|required');
 		$this->form_validation->set_rules('what', 'what', 'trim|required');
 		$this->form_validation->set_rules('provinsi', 'Provinsi', 'trim|required');
 		$this->form_validation->set_rules('who', 'who', 'trim|required');
 		$this->form_validation->set_rules('latitude', 'latitude', 'trim|required');
 		$this->form_validation->set_rules('longitude', 'longitude', 'trim|required');
 		$this->form_validation->set_rules('where', 'where', 'trim|required');
-		$this->form_validation->set_rules('type', 'type', 'trim|required');
 		$this->form_validation->set_rules('why', 'Mengapa', 'trim|required');
 		$this->form_validation->set_rules('how', 'Bagaimana', 'trim|required');
 		$this->form_validation->set_rules('date', 'Tanggal', 'trim|required');
@@ -226,12 +240,12 @@ class PelaporanController extends CI_Controller
 			$status = ['status' => 0, 'csrf' => $this->security->get_csrf_hash()];
 			$response = [
 				'what' 		=> form_error('what'),
-				'satker' 	=> form_error('satker'),
+				'id_satker' 	=> form_error('id_satker'),
 				'provinsi' 		=> form_error('provinsi'),
 				'who' 		=> form_error('who'),
 				'latitude' 		=> form_error('latitude'),
 				'longitude' 		=> form_error('longitude'),
-				'type' 		=> form_error('type'),
+				'id_activity_jenis' 		=> form_error('id_activity_jenis'),
 				'where' 		=> form_error('where'),
 				'why' 		=> form_error('why'),
 				'how' 		=> form_error('how'),
@@ -240,48 +254,35 @@ class PelaporanController extends CI_Controller
 				'flag_locationedit' 		=> form_error('flag_locationedit')
 			];
 			echo json_encode([$status,$response]);
-		}else{
-		
-		if($this->input->post('gambar') == "undefined")
-		{
-			$data = [
-				'what'	=> $this->input->post('what'),
-				'id_satker'		=> $this->input->post('satker'),
-				'who'		=> $this->input->post('who'),
-				'latitude'		=> $this->input->post('latitude'),
-				'longitude'		=> $this->input->post('longitude'),
-				'id_activity_jenis'		=> $this->input->post('type'),
-				'where'		=> $this->input->post('where'),
-				'why'				=> $this->input->post('why'),
-				'how'				=> $this->input->post('how'),
-				'catatan_penting'	=> $this->input->post('notes'),
-				//'gambar'			=> $this->report->do_upload(),
-				'when'				=> $this->input->post('date'),
-				'flag_location'				=> $this->input->post('flag_locationedit'),
-				'updated_by'		=> $this->session->userdata('id_user'),
-				'updated_date'		=> date('Y-m-d H:i:s')
-			];
-		}else if($this->input->post('gambar') != "undefined")
-		{
-			$data = [
-				'what'	=> $this->input->post('what'),
-				'id_satker'		=> $this->input->post('satker'),
-				'who'		=> $this->input->post('who'),
-				'latitude'		=> $this->input->post('latitude'),
-				'longitude'		=> $this->input->post('longitude'),
-				'id_activity_jenis'		=> $this->input->post('type'),
-				'where'		=> $this->input->post('where'),
-				'why'				=> $this->input->post('why'),
-				'how'				=> $this->input->post('how'),
-				'catatan_penting'	=> $this->input->post('notes'),
-				'gambar'			=> $this->report->do_upload(),
-				'when'				=> $this->input->post('date'),
-				'flag_location'				=> $this->input->post('flag_locationedit'),
-				'updated_by'		=> $this->session->userdata('id_user'),
-				'updated_date'		=> date('Y-m-d H:i:s')
-			];
 		}
-			
+        else{
+
+            $data = [
+                'id_satker'			=> $this->input->post('id_satker'),
+                'id_activity_jenis'	    => $this->input->post('id_activity_jenis'),
+                'id_activity_jenis2'	=> $this->input->post('id_activity_jenis2'),
+                'id_rekap_table'	=> $this->input->post('id_rekap_table'),
+                'what'	            => $this->input->post('what'),
+                'who'		        => $this->input->post('who'),
+                'latitude'		    => $this->input->post('latitude'),
+                'longitude'		    => $this->input->post('longitude'),
+                'where'		        => $this->input->post('where'),
+                'why'				=> $this->input->post('why'),
+                'how'				=> $this->input->post('how'),
+                'catatan_penting'	=> $this->input->post('notes'),
+                'when'				=> $this->input->post('date'),
+                'flag_location'		=> $this->input->post('flag_locationedit'),
+                'updated_by'		=> $this->session->userdata('id_user'),
+                'updated_date'		=> date('Y-m-d H:i:s')
+            ];
+
+            //insert gambar-sampul kalau perlu
+            if (!empty($_FILES['gambar'])) {
+                $gambar = $this->report->do_upload();
+                if (!empty($gambar)) {
+                    $data['gambar'] = $gambar;
+                }
+            }			
 
 			if ($this->input->post('kelurahan')) {
 				$data['id_geografi'] = $this->input->post('kelurahan');
@@ -301,6 +302,23 @@ class PelaporanController extends CI_Controller
 			}
 		}
 	}
+
+    function getPelaporanRekapTable($id_activity_jenis) {
+        $result = $this->report->getPelaporanRekapTable($id_activity_jenis);
+        $json = array();
+        if ($result == null) {
+            $json['label'] = '';
+        }
+        else {
+            foreach($result as $k => $v) {
+                $json['label'] = $k;
+                $json['data'] = $v;
+            }
+        }
+        echo json_encode($json);
+
+    }
+
 
 	// public function detail()
 	// {

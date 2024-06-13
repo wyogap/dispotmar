@@ -24,7 +24,7 @@
 					</div>
 				</div>
 				<div class="card-body">
-					<div class="row" style="display: none">
+					<div class="row">
 						<div class="col-md-12 text-right">
 							<button class="btn btn-success" id="tambahdatas" onclick=tambahData() >
 								Tambah Data
@@ -59,44 +59,44 @@
 								<th>Last Updated</th>
 							</thead>
 							<tbody>
-								<?php $no=1; foreach($dataKbn as $kbn): ?>
+								<?php $no=1; foreach($dataKomcad as $komcad): ?>
 								<tr>
 									<td class="text-center">
-										<?php if(policy('Komcad','update')): ?>
-										<button onclick="editModal(`<?= $kbn->id_kbn; ?>`)"
+										<?php if(policy('KOMCAD','update')): ?>
+										<button onclick="editModal(`<?= $komcad->id_komcad; ?>`)"
 											class="btn btn-sm btn-primary">
 											<i class="fa fa-pencil "></i>
 										</button>
 										<?php endif ?>
-										<?php if(policy('Komcad','delete')): ?>
+										<?php if(policy('KOMCAD','delete')): ?>
 										<button
-											onclick="deleteConfirm(`<?= $kbn->id_kbn; ?>`)"
+											onclick="deleteConfirm(`<?= $komcad->id_komcad; ?>`)"
 											class="btn btn-sm btn-danger">
 											<i class="fa fa-trash "></i>
 										</button>
 										<?php endif ?>
 									</td>
 									<td><?= $no++ ?></td>
-									<td><?= $kbn->nama_satker ?></td>
-									<td><?= $kbn->nama ?></td>
-									<td><?= $kbn->jenis_kelamin ?></td>
-									<td><?= $kbn->tempat_lahir ?></td>
-									<td><?= $kbn->tanggal_lahir ?></td>
-									<td><?= $kbn->pangkat ?></td>
-									<td><?= $kbn->no_induk_komcad ?></td>
-									<td><?= $kbn->pendidikan ?></td>
-									<td><?= $kbn->tanggal_penetapan ?></td>
-									<td><?= $kbn->nomer_telp ?></td>
-									<td><?= $kbn->email ?></td>
-									<td><?= $kbn->agama ?></td>
-									<td><?= $kbn->suku_bangsa ?></td>
-									<td><?= $kbn->nama_kelurahan ?></td>
-									<td><?= $kbn->nama_kecamatan ?></td>
-									<td><?= $kbn->nama_kabupaten ?></td>
-									<td><?= $kbn->nama_provinsi ?></td>
-									<td><?= $kbn->foto ?></td>
-									<td><?= $kbn->updated_by ?></td>
-									<td><?= $kbn->updated_date?></td>
+									<td><?= $komcad->nama_satker ?></td>
+									<td><?= $komcad->nama ?></td>
+									<td><?= $komcad->jenis_kelamin ?></td>
+									<td><?= $komcad->tempat_lahir ?></td>
+									<td><?= $komcad->tanggal_lahir ?></td>
+									<td><?= $komcad->pangkat ?></td>
+									<td><?= $komcad->nomor_induk_komcad ?></td>
+									<td><?= $komcad->pendidikan ?></td>
+									<td><?= $komcad->tmt_penetapan ?></td>
+									<td><?= $komcad->nomor_telp ?></td>
+									<td><?= $komcad->email ?></td>
+									<td><?= $komcad->agama ?></td>
+									<td><?= $komcad->suku_bangsa ?></td>
+									<td><?= $komcad->nama_kelurahan ?></td>
+									<td><?= $komcad->nama_kecamatan ?></td>
+									<td><?= $komcad->nama_kabupaten ?></td>
+									<td><?= $komcad->nama_provinsi ?></td>
+									<td><?= $komcad->foto ?></td>
+									<td><?= $komcad->updated_by ?></td>
+									<td><?= $komcad->updated_date?></td>
 								</tr>
 								<?php endforeach ?>
 							</tbody>
@@ -122,8 +122,8 @@
 				</button>
 			</div>
 			<form class="form-horizontal" method="POST" id="editForm" tcg-mode="edit">
-                <input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>">
-                <input type="hidden" name="id_kbn" value="">
+                <input type="hidden" name="csrf_al" value="<?= $this->security->get_csrf_hash();?>" tcg-type='input'>
+                <input type="hidden" name="id_komcad" value="" tcg-type='input'>
 				<div class="modal-body">
 					<div class="row">
 						<div class="col-lg-12 col-md-12" tcg-allow-edit=1 tcg-allow-add=1>
@@ -131,10 +131,10 @@
 								<label class="col-md-3 col-form-label">Satker </label>
 								<div class="col-md-9">
 									<?php if(($this->session->userdata('role') == 'Satker')): ?>
-										<input type="hidden" class="form-control" name="satker" value="<?= $this->session->userdata('id_satker') ?>">
+										<input type="hidden" class="form-control" name="id_satker" value="<?= $this->session->userdata('id_satker') ?>" tcg-type='input'
 										<select class="form-control" id="satkerPicked" name="satkerPicked" disabled>
 									<?php else: ?>
-										<select class="form-control" id="satker" name="satker" style="width: 100%;">
+										<select class="form-control" id="satker" name="id_satker" style="width: 100%;" tcg-type='input'>
 									<?php endif ?>
 										<option value="">Pilih Satuan Kerja</option>
 										<?php foreach($satkers as $satker): ?>
@@ -147,14 +147,14 @@
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="nama">Nama</label>
 								<div class="col-md-9">
-									<input type="text" id="nama" name="nama" class="form-control">
+									<input type="text" id="nama" name="nama" class="form-control" tcg-type='input'>
 									<div class="invalid-feedback warning-nama"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label">Jenis Kelamin </label>
 								<div class="col-md-9">
-                                    <select class="form-control" id="jenis_kelamin" name="jenis_kelamin" style="width: 100%;">
+                                    <select class="form-control" id="jenis_kelamin" name="jenis_kelamin" style="width: 100%;" tcg-type='input'>
 										<option value="L">Laki-laki</option>
 										<option value="P">Perempuan</option>
 									</select>
@@ -164,14 +164,14 @@
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="tempat_lahir">Tempat Lahir</label>
 								<div class="col-md-9">
-									<input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control">
+									<input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control" tcg-type='input'>
 									<div class="invalid-feedback warning-tempat_lahir"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="tanggal_lahir">Tanggal Lahir</label>
 								<div class="col-md-9">
-									<input type="text" id="tanggal_lahir" name="tanggal_lahir" class="form-control">
+									<input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" tcg-type='input'>
 									<div class="invalid-feedback warning-tanggal_lahir"></div>
 								</div>
 							</div>
@@ -180,77 +180,77 @@
 								<div class="col-md-9">
                                     <div class="row">
 									<div class="col-md-6 mb-4">
-                                        <input type="text" id="pangkat" name="pangkat" class="form-control">
+                                        <input type="text" id="pangkat" name="pangkat" class="form-control" tcg-type='input'>
                                         <div class="invalid-feedback warning-pangkat"></div>
                                     </div>
-                                    </div>
-                                    <div class="row">
 									<div class="col-md-6 mb-4">
-                                        <select class="form-control" id="kelompok_pangkat" name="kelompok_pangkat" style="width: 100%;">
+                                        <select class="form-control" id="golongan_pangkat" style="width: 100%;" name="golongan_pangkat" tcg-type='input'>
                                             <option value="Perwira">Perwira</option>
                                             <option value="Bintara">Bintara</option>
                                             <option value="Tamtama">Tamtama</option>
                                         </select>
-                                        <div class="text-danger warning-kelompok_pangkat"></div>
+                                        <div class="text-danger warning-golongan_pangkat"></div>
                                     </div>
                                     </div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
-								<label class="col-md-3 col-form-label" for="nomer_induk_komcad">Nomer Induk Komcad</label>
+								<label class="col-md-3 col-form-label" for="nomor_induk_komcad">Nomer Induk Komcad</label>
 								<div class="col-md-9">
-									<input type="text" id="nomer_induk_komcad" name="nomer_induk_komcad" class="form-control">
-									<div class="invalid-feedback warning-nomer_induk_komcad"></div>
+									<input type="text" id="nomor_induk_komcad" name="nomor_induk_komcad" class="form-control" tcg-type='input'>
+									<div class="invalid-feedback warning-nomor_induk_komcad"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="pendidikan">Pendidikan</label>
 								<div class="col-md-9">
-									<input type="text" id="pendidikan" name="pendidikan" class="form-control">
+									<input type="text" id="pendidikan" name="pendidikan" class="form-control" tcg-type='input'>
 									<div class="invalid-feedback warning-pendidikan"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="tmt_penetapan">Tanggal Penetapan</label>
 								<div class="col-md-9">
-									<input type="text" id="tmt_penetapan" name="tmt_penetapan" class="form-control">
+									<input type="date" id="tmt_penetapan" name="tmt_penetapan" class="form-control" tcg-type='input'>
 									<div class="invalid-feedback warning-tmt_penetapan"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
-								<label class="col-md-3 col-form-label" for="nomer_telp">Nomer Telp</label>
+								<label class="col-md-3 col-form-label" for="nomor_telp">Nomer Telp</label>
 								<div class="col-md-9">
-									<input type="text" id="nomer_telp" name="nomer_telp" class="form-control">
-									<div class="invalid-feedback warning-nomer_telp"></div>
+									<input type="text" id="nomor_telp" name="nomor_telp" class="form-control" tcg-type='input'>
+									<div class="invalid-feedback warning-nomor_telp"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label" for="email">Email</label>
 								<div class="col-md-9">
-									<input type="text" id="email" name="email" class="form-control">
+									<input type="text" id="email" name="email" class="form-control" tcg-type='input'>
 									<div class="invalid-feedback warning-email"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label">Agama </label>
 								<div class="col-md-9">
-                                    <select class="form-control" id="agama" name="agama" style="width: 100%;">
+                                    <select class="form-control" id="id_agama" name="id_agama" style="width: 100%;" tcg-type='input'>
+                                        <option value="0">Pilih Agama</option>
                                         <?php foreach($agama as $a): ?>
-                                        <option value="<?= $a->id_agama ?>"><?= $a->nama ?></option>
+                                        <option value="<?= $a->id_jenis_agama ?>"><?= $a->nama ?></option>
                                         <?php endforeach ?>
 									</select>
-									<div class="text-danger warning-agama"></div>
+									<div class="text-danger warning-id_agama"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
 								<label class="col-md-3 col-form-label">Suku Bangsa </label>
 								<div class="col-md-9">
-                                    <select class="form-control" id="suku_bangsa" name="suku_bangsa" style="width: 100%;">
+                                    <select class="form-control" id="id_suku_bangsa" name="id_suku_bangsa" style="width: 100%;" tcg-type='input'>
+                                        <option value="0">Pilih Suku Bangsa</option>
                                         <?php foreach($suku_bangsa as $s): ?>
-                                        <option value="<?= $s->id_suku_bangsa ?>"><?= $s->nama ?></option>
+                                        <option value="<?= $s->id_jenis_suku ?>"><?= $s->nama ?></option>
                                         <?php endforeach ?>
 									</select>
-									<div class="text-danger warning-suku_bangsa"></div>
+									<div class="text-danger warning-id_suku_bangsa"></div>
 								</div>
 							</div>
 							<div class="form-group row" tcg-allow-edit=1 tcg-allow-add=1>
@@ -258,7 +258,7 @@
 								<div class="col-md-9">
                                     <div class="row">
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="provinsi" name="provinsi" style="width: 100%;">
+										<select class="form-control" id="provinsi" name="id_provinsi" style="width: 100%;" tcg-type='input'>
 											<option value="">Pilih Provinsi</option>
 											<?php foreach($provinsi as $prov): ?>
 											<option value="<?= $prov->id_geografi ?>"><?= $prov->nama ?></option>
@@ -267,22 +267,25 @@
 										<div class="text-danger warning-provinsi"></div>
 									</div>
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="kabupaten" name="kabupaten" style="width: 100%;">
+										<select class="form-control" id="kabupaten" name="id_kabupaten" style="width: 100%;" tcg-type='input'>
 											<option value="">Pilih Kabupaten</option>
 										</select>
 									</div>
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="kecamatan" name="kecamatan" style="width: 100%;">
+										<select class="form-control" id="kecamatan" name="id_kecamatan" style="width: 100%;" tcg-type='input'>
 											<option value="">Pilih Kecamatan</option>
 										</select>
 									</div>
 									<div class="col-md-6 mb-4">
-										<select class="form-control" id="kelurahan" name="kelurahan" style="width: 100%;">
+										<select class="form-control" id="kelurahan" name="id_kelurahan" style="width: 100%;" tcg-type='input'>
 											<option value="">Pilih Kelurahan</option>
 										</select>
-										<input type="text" id="flag_location" name="flag_location" style="display:none;" class="form-control">
 									</div>
-                                    </div>
+									<div class="col-md-12 mb-4">
+                                        <input type="text" id="alamat_ktp" name="alamat_ktp" class="form-control" placeholder="Alamat KTP" tcg-type='input'>
+                                        <div class="invalid-feedback warning-alamat"></div>
+									</div>
+                                     </div>
                                     <div class="mb-4">
                                         <button type="button" class="btn btn-outline-secondary btn-sm btn-square" onclick="getCurrentPlace()"><i class="fa fa-map-pin mr-2"></i> Dapatkan Lokasi</button>
                                     </div>
@@ -292,11 +295,11 @@
                                     <div class="col-md-12">NB : Silahkan klik di peta <b>(<i class="fa fa-map-marker"></i>)</b> untuk perubahan data koordinat.</div>
                                     <div class="col-md-6">
                                         <label class="col-form-label" for="latitude">Lintang</label>
-                                        <input type="text" id="latitude" name="latitude" class="form-control">
+                                        <input type="text" id="latitude" name="latitude" class="form-control" tcg-type='input'>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="col-form-label" for="latitude">Bujur</label>
-                                        <input type="text" id="longitude" name="longitude" class="form-control">
+                                        <input type="text" id="longitude" name="longitude" class="form-control" tcg-type='input'>
                                     </div>
                                     </div>
                                 </div>
@@ -367,8 +370,10 @@
 			$('.warning-' + name).html('')
 		});
 
-		$('#editForm').submit(function () {
-            let mode = $(this).getAttr("tcg-mode");
+		$('#editForm').submit(function (e) {
+            e.preventDefault();
+
+            let mode = $(this).attr("tcg-mode");
             if (mode == null) {
                 mode == 'edit';
             }
@@ -378,17 +383,37 @@
                 url = "<?= site_url() ?>komcad/store";
             }
 
+            frmData = new FormData();
+            elements = $('#editForm').find("[tcg-type='input']");
+            elements.each(function(idx, dom) {
+                el = $(dom);
+                field = el.attr('name');
+                val = el.val();
+                frmData.append(field, val);
+            });
+
+            fileInput = document.querySelector("#foto");
+            if (fileInput.files.length > 0) {
+                frmData.append('foto', fileInput.files[0]);
+            }
+
 			$.ajax({
 				type: "POST",
 				url: url,
 				dataType: "json",
-				data: $(this).serialize(),
+				data: frmData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                timeout: 60000,
 				success: function (data) {
 					if (data[0].status == 0) {
 						$('input[name="csrf_al"]').val(data[0].csrf)
 						$.each(data[1], function (key, value) {
-							$('input[name="' + key + '"]').addClass('is-invalid')
-							$('.warning-' + key).html(value)
+                            if (value != null && value != '') {
+                                $('input[name="' + key + '"]').addClass('is-invalid')
+							    $('.warning-' + key).html(value)
+                            }
 						});
 					} else {
 						location.reload(true);
@@ -437,7 +462,8 @@
                         let field = $('#kabupaten');
 						field.html(html);
                         //set value
-                        field.val( field.attr("defaultValue") );
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
 					}
 				});
 				return false;
@@ -465,7 +491,8 @@
                         let field = $('#kecamatan');
 						field.html(html);
                         //set value
-                        field.val( field.attr("defaultValue") );
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
 					}
 				});
 				return false;
@@ -493,7 +520,8 @@
                         let field = $('#kelurahan');
 						field.html(html);
                         //set value
-                        field.val( field.attr("defaultValue") );
+                        let val = field.attr("defaultValue");
+                        field.val( val ).trigger("change");
 					}
 				});
 				return false;
@@ -603,6 +631,7 @@
 
         $("#editForm").find("[tcg-allow-add=1]").show();
         $("#editForm").find("[tcg-allow-add=0]").hide();
+        $('#editForm').attr('tcg-mode', 'add');
     }
 
 	function editModal(id) {
@@ -610,6 +639,7 @@
 
         $("#editForm").find("[tcg-allow-edit=1]").show();
         $("#editForm").find("[tcg-allow-edit=0]").hide();
+        $('#editForm').attr('tcg-mode', 'edit');
 
 		$.ajax({
 			type: 'ajax',
@@ -622,7 +652,7 @@
 			success: function (data) {
                 profil = data.komcad;
 
-                elements = $('#editForm').find("[name!='']");
+                elements = $('#editForm').find("[tcg-type='input']");
                 elements.each(function(idx) {
                     el = $(this);
                     field = el.attr('name');
@@ -631,9 +661,29 @@
                     this.defaultValue=val;
                 })
 
+                $("#satker").trigger("change");
+                $("#jenis_kelamin").trigger("change");
+                $("#golongan_pangkat").trigger("change");
+                $("#id_agama").trigger("change");
+                $("#id_suku_bangsa").trigger("change");
                 $("#provinsi").trigger("change");
-                $("#kabupaten").trigger("change");
-                $("#kecamatan").trigger("change");
+
+                //dropify
+                if (data.komcad["foto"] != null && data.komcad["foto"] != '') {
+                    let img = "<?= site_url() ?>" +data.komcad["foto"];
+
+                    // Get dropify instance
+                    var dropify = $("#foto").data('dropify');
+
+                    // Reset current preview
+                    dropify.resetPreview();
+                    dropify.clearElement();
+
+                    // Set new default file and re-init the dropify element
+                    dropify.settings.defaultFile = img;
+                    dropify.destroy();
+                    dropify.init();
+                }
 
 			},
 			error: function (data) {

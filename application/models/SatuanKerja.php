@@ -720,4 +720,33 @@ class SatuanKerja extends CI_Model
 				return "null.jpg";
 			}
 	}
+
+    public function getKotama()
+	{
+		$this->db->select('SATKER.*');
+		$this->db->from('org_satker AS SATKER');
+		$this->db->where('SATKER.id_level','1');
+		$this->db->where('SATKER.is_active','1');
+		$this->db->order_by('SATKER.sequence','ASC');
+
+		return $this->db->get()->result();
+	}
+
+    public function getSatkerBukanKotama()
+	{
+		$this->db->select('a.*');
+        $this->db->select("case when a.id_level=2 then b.id_satker else coalesce(c.id_satker,b.id_satker) end as id_kotama", false);
+        $this->db->select("case when a.id_level=2 then b.nama_satker else coalesce(c.nama_satker,b.nama_satker) end as nama_kotama", false);
+        $this->db->select("case when a.id_level=2 then a.id_satker else b.id_satker end as id_lantamal", false);
+        $this->db->select("case when a.id_level=2 then a.nama_satker else b.nama_satker end as nama_lantamal", false);
+		$this->db->from('org_satker AS a');
+		$this->db->join('org_satker AS b',"b.id_satker=a.id_parent_satker and b.is_active=1");
+		$this->db->join('org_satker AS c',"c.id_satker=b.id_parent_satker and c.is_active=1", 'LEFT OUTER');
+		$this->db->where('a.id_level>','1');
+		$this->db->where('a.is_active','1');
+		$this->db->order_by('a.sequence','ASC');
+
+		return $this->db->get()->result();
+	}
+
 }

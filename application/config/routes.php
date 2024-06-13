@@ -122,6 +122,7 @@ $route['user_management_edit'] = 'UserController/edit';
 
 // Pelaporan
 $route['data_pelaporan'] = 'PelaporanController/index';
+$route['api/getPelaporanRekapTable/(:any)'] = 'PelaporanController/getPelaporanRekapTable/$1';
 $route['data_pelaporan/(:any)'] = 'PelaporanController/show/$1';
 $route['data_pelaporan/(:any)/show'] = 'PelaporanController/detail/$1';
 $route['form_pelaporan'] = 'PelaporanController/create';
@@ -616,21 +617,44 @@ $route['entry_kasus_covid/update_kontakerat'] = 'vaksin/EntryKasusCovidControlle
 
 //kbn
 $route['kbn'] = 'kbn/KbnController/index';
+$route['kbn/dashboard'] = 'kbn/KbnController/dashboard';
+$route['kbn/edukasi'] = 'kbn/KbnController/pelaporan/edukasi';
+$route['kbn/ekonomi'] = 'kbn/KbnController/pelaporan/ekonomi';
+$route['kbn/kesehatan'] = 'kbn/KbnController/pelaporan/kesehatan';
+$route['kbn/pariwisata'] = 'kbn/KbnController/pelaporan/pariwisata';
+$route['kbn/pertahanan'] = 'kbn/KbnController/pelaporan/pertahanan';
+$route['api/getKbnActivity/(:any)/(:any)'] = 'kbn/KbnController/getKbnActivity/$1/$2';
+//$route['api/getKbnActivity/(:any)'] = 'kbn/KbnController/getKbnActivity/$1/1';
+$route['api/getKbnActivityBySatker/(:any)/(:any)'] = 'kbn/KbnController/getKbnActivityBySatker/$1/$2';
+$route['api/getKbnActivityByPersonal/(:any)/(:any)'] = 'kbn/KbnController/getKbnActivityByPersonal/$1/$2';
+$route['api/getKbnActivityByKbn/(:any)/(:any)'] = 'kbn/KbnController/getKbnActivityByKbn/$1/$2';
 $route['kbn/store'] = 'kbn/KbnController/store';
-$route['kbn/(:any)'] = 'kbn/KbnController/show/$1';
 $route['kbn/update'] = 'kbn/KbnController/update';
 $route['kbn/(:any)/delete'] = 'kbn/KbnController/delete/$1';
+$route['kbn/(:any)'] = 'kbn/KbnController/show/$1';
+// $route['kbn/dashboard'] = 'kbn/KbnController/index';
 
 //komcad
 $route['komcad'] = 'komcad/KomcadController/index';
+$route['komcad/dashboard'] = 'komcad/KomcadController/dashboard';
+$route['komcad/pelaporan'] = 'komcad/KomcadController/pelaporan';
+$route['api/getKomcadActivity/(:any)'] = 'komcad/KomcadController/getKomcadActivity/$1';
+$route['api/getKomcadActivityBySatker/(:any)'] = 'komcad/KomcadController/getKomcadActivityBySatker/$1';
+$route['api/getKomcadActivityByPersonal/(:any)'] = 'komcad/KomcadController/getKomcadActivityByPersonal/$1';
 $route['komcad/store'] = 'komcad/KomcadController/store';
-$route['komcad/(:any)'] = 'komcad/KomcadController/show/$1';
 $route['komcad/update'] = 'komcad/KomcadController/update';
 $route['komcad/(:any)/delete'] = 'komcad/KomcadController/delete/$1';
+$route['komcad/(:any)'] = 'komcad/KomcadController/show/$1';
 
 //sakabahari
 $route['sakabahari'] = 'sakabahari/SakaBahariController/index';
+$route['sakabahari/dashboard'] = 'sakabahari/SakaBahariController/dashboard';
+$route['sakabahari/pelaporan'] = 'sakabahari/SakaBahariController/pelaporan';
+$route['api/getSakaActivity/(:any)'] = 'sakabahari/SakaBahariController/getSakaActivity/$1';
+$route['api/getSakaActivityBySatker/(:any)'] = 'sakabahari/SakaBahariController/getSakaActivityBySatker/$1';
+$route['api/getSakaActivityByPersonal/(:any)'] = 'sakabahari/SakaBahariController/getSakaActivityByPersonal/$1';
+$route['api/getSakaActivityBySaka/(:any)'] = 'sakabahari/SakaBahariController/getSakaActivityBySaka/$1';
 $route['sakabahari/store'] = 'sakabahari/SakaBahariController/store';
-$route['sakabahari/(:any)'] = 'sakabahari/SakaBahariController/show/$1';
 $route['sakabahari/update'] = 'sakabahari/SakaBahariController/update';
 $route['sakabahari/(:any)/delete'] = 'sakabahari/SakaBahariController/delete/$1';
+$route['sakabahari/(:any)'] = 'sakabahari/SakaBahariController/show/$1';
