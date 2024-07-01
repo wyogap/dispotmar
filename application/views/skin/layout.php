@@ -119,6 +119,10 @@
 	<link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/multi/multi.min.css">
 
 	<style>
+        table.dataTable>tbody>tr.child {
+            background: transparent !important;
+        }
+
         /* Important part */
         .modal-dialog{
             overflow-y: initial !important
@@ -442,6 +446,15 @@
 						<ul class="slide-menu">
 							<li><a class="slide-item" href="<?= site_url()?>home"><span>Gelar Pangkalan</span></a>
 							</li>
+							<li><a class="slide-item" href="<?= site_url()?>dashboard5"><span>Pelaporan
+										Babinpotmar</span></a>
+							</li>
+							<li><a class="slide-item" href="<?= site_url()?>kbn/dashboard"><span>Kampung Bahari Nusantara</span></a>
+							</li>
+							<li><a class="slide-item" href="<?= site_url()?>komcad/dashboard"><span>Komcad / Komduk</span></a>
+							</li>
+							<li><a class="slide-item" href="<?= site_url()?>sakabahari/dashboard"><span>Saka Bahari</span></a>
+							</li>
 							<li><a class="slide-item" href="<?= site_url()?>dashboard1"><span>Sebaran Produksi Ketahanan
 										Pangan</span></a>
 							</li>
@@ -453,15 +466,6 @@
 							</li>
 							<li><a class="slide-item" href="<?= site_url()?>dashboard4"><span>Personel dan
 										Lahan</span></a>
-							</li>
-							<li><a class="slide-item" href="<?= site_url()?>kbn/dashboard"><span>Kampung Bahari Nusantara</span></a>
-							</li>
-							<li><a class="slide-item" href="<?= site_url()?>komcad/dashboard"><span>Komcad / Komduk</span></a>
-							</li>
-							<li><a class="slide-item" href="<?= site_url()?>sakabahari/dashboard"><span>Saka Bahari</span></a>
-							</li>
-							<li><a class="slide-item" href="<?= site_url()?>dashboard5"><span>Pelaporan
-										Babinpotmar</span></a>
 							</li>
 							<li><a class="slide-item" href="<?= site_url()?>dashboard6"><span>Geodemokonsos</span></a>
 							</li>
@@ -957,10 +961,61 @@
 			$('[data-toggle="tooltip"]').tooltip()
 			if ($('#datetimepicker1').length) {
 				$('#datetimepicker1').datetimepicker({
-					format: 'YYYY-MM-DD HH:mm:ss'
+					format: 'YYYY-MM-DD HH:mm:ss',
+                    //autoclose: true,
 				});
 			}
 		});
+
+        $.extend( $.fn.dataTable.defaults, { 
+            //responsive: true,
+            responsive: {
+                details: {
+                    // type: 'column',
+                    // target: 1,
+                    renderer: function (api, rowIdx, columns) {
+                        let data = columns
+                            .map((col, i) => {
+                                return col.hidden
+                                    ? '<tr data-dt-row="' +col.rowIndex+ '" data-dt-column="' +col.columnIndex+ '">' +
+                                            '<td>' +col.title+ ':' + '</td> ' + 
+                                            '<td>' +col.data+ '</td>' +
+                                        '</tr>'
+                                    : '';
+                            })
+                            .join('');
+        
+                        let table = document.createElement('table');
+                        table.innerHTML = data;
+        
+                        return data ? table : false;
+                    }
+                }
+            },
+            "language": {
+                    "processing":   "Sedang proses...",
+                    "lengthMenu":   "Tampilan _MENU_ baris",
+                    "zeroRecords":  "Tidak ditemukan data yang sesuai",
+                    "info":         "Tampilan _START_ - _END_ dari _TOTAL_ baris",
+                    "infoEmpty":    "Tampilan 0 hingga 0 dari 0 baris",
+                    "infoFiltered": "(disaring dari _MAX_ baris keseluruhan)",
+                    "infoPostFix":  "",
+                    "loadingRecords": "Loading...",
+                    "emptyTable":   "Tidak ditemukan data yang sesuai",
+                    "search":       "Cari:",
+                    "url":          "",
+                    "paginate": {
+                        "first":    "Awal",
+                        "previous": "Balik",
+                        "next":     "Lanjut",
+                        "last":     "Akhir"
+                    },
+                    aria: {
+                        sortAscending:  ": klik untuk mengurutkan dari bawah ke atas",
+                        sortDescending: ": klik untuk mengurutkan dari atas ke bawah"
+                    }
+                },	
+        } );        
 
 	</script>
 	<script>

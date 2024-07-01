@@ -134,7 +134,7 @@
 </div>
 
 <script src="<?php echo base_url() ?>assets/js/vendors/jquery-3.2.1.min.js"></script>
-<script async="false" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByRkCzDDjo-th8ecT72ZBN6f69RUmwt0I&callback=initMap"></script>
+<script async="false" src="https://maps.googleapis.com/maps/api/js?key=<?= GOOGLEMAP_KEY ?>&callback=initMap"></script>
 <script>
 	$(document).ready(function () {
 		$("#satker").select2();

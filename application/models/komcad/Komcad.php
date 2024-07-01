@@ -21,7 +21,7 @@ class Komcad extends CI_Model
         $this->db->select("case when s.id_level=2 then s2.nama_satker else s3.nama_satker end as nama_kotama", false);
         $this->db->select("case when s.id_level=2 then s.id_satker else s2.id_satker end as id_lantamal", false);
         $this->db->select("case when s.id_level=2 then s.nama_satker else s2.nama_satker end as nama_lantamal", false);
-		$this->db->select("x.nama as suku_bangsa, y.nama as agama");
+		$this->db->select("x.nama as suku_bangsa, y.nama as agama, b.label as pendidikan_label, c.label as jurusan_label, d.nama as status_nikah");
         $this->db->from("rekap_komcad a");
         $this->db->join("org_geografi w1", "w1.id_geografi=a.id_kelurahan and w1.is_active=1", "LEFT OUTER");
         $this->db->join("org_geografi w2", "w2.id_geografi=a.id_kecamatan and w2.is_active=1", "LEFT OUTER");
@@ -32,6 +32,9 @@ class Komcad extends CI_Model
         $this->db->join("org_satker s3", "s3.id_satker=s2.id_parent_satker and s3.is_active=1", "LEFT OUTER");
         $this->db->join("mst_jenis_suku x", "x.id_jenis_suku=a.id_suku_bangsa and x.is_active=1", "LEFT OUTER");
         $this->db->join("mst_jenis_agama y", "y.id_jenis_agama=a.id_agama and y.is_active=1", "LEFT OUTER");
+        $this->db->join("mst_pendidikan b", "b.value=a.pendidikan_terakhir and b.is_active=1", "LEFT OUTER");
+        $this->db->join("mst_jurusan_pendidikan c", "c.value=a.jurusan_pendidikan and c.is_active=1", "LEFT OUTER");
+        $this->db->join("mst_status_nikah d", "d.id_status_nikah=a.id_status_nikah and d.is_active=1", "LEFT OUTER");
 
         $this->db->where("a.is_active", 1);
         if ($filter != null) {
@@ -180,7 +183,7 @@ class Komcad extends CI_Model
         }
 
         if ($filters != null) {
-            if ($filters['startDate'] && $filters['finishDate']) {
+            if (!empty($filters['startDate']) && !empty($filters['finishDate'])) {
                 $this->db->where("date_format(A.when, '%Y-%m-%d') BETWEEN '" .$filters['startDate']. "' AND '" .$filters['finishDate']. "'", null, false);
                 unset ($filters['startDate']);
                 unset ($filters['finishDate']);

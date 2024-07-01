@@ -17,9 +17,9 @@ class KbnController extends CI_Controller {
 	{
 		$this->data['title'] = 'Rekap - Kampung Bahari Nusantara';
 
-		if (policy('DEMO','read')) {
+		if (policy('KBN','read')) {
 			$this->data['dataKbn'] = $this->kbn->getBySatker([$this->session->userdata('id_satker')]);
-		}else if (policy('DEMO','read_all')){
+		}else if (policy('KBN','read_all')){
 			$this->data['dataKbn'] = $this->kbn->get();
 		}
 
@@ -33,22 +33,34 @@ class KbnController extends CI_Controller {
 		$this->load->view('skin/layout', $data);
 	}
 
+    public function rekap()
+	{
+        $json['status'] = 1;
+		if (policy('KBN','read')) {
+			$json['data'] = $this->kbn->getBySatker([$this->session->userdata('id_satker')]);
+		}else if (policy('KBN','read_all')){
+			$json['data'] = $this->kbn->get();
+		}
+
+		echo json_encode($json);
+    }
+
 	public function show($id)
 	{
-		if (!policy('KBN','update')) show_404();
+		if (!policy('KBN','update')) print_json_error("not-authorized");
 
 		$this->data['kbn'] = $this->kbn->find($id);
 		echo json_encode($this->data);
 	}
 
 	public function store(){
-		if (!policy('KBN','create')) show_404();
+		if (!policy('KBN','create')) print_json_error("not-authorized");
 
 		$this->form_validation->set_rules('id_satker', 'Satuan Kerja', 'trim|integer|required');
 		$this->form_validation->set_rules('klaster', 'Klaster', 'trim|required');
 		$this->form_validation->set_rules('nama', 'Nama KBN', 'trim|required');
-		$this->form_validation->set_rules('nama_tertua_desa', 'Nama Pembina', 'trim|required');
-		$this->form_validation->set_rules('nama_ketua_pelaksana', 'Nama Tertua Desa', 'trim|required');
+		$this->form_validation->set_rules('nama_tertua_desa', 'Nama Tertua Desa', 'trim');
+		$this->form_validation->set_rules('nama_ketua_pelaksana', 'Nama Ketua Pelaksana', 'trim|required');
 		$this->form_validation->set_rules('id_kelurahan', 'Desa/Kelurahan', 'trim|integer|required');
 		$this->form_validation->set_rules('latitude', 'Lintang', 'trim|required');
 		$this->form_validation->set_rules('longitude', 'Bujur', 'trim|required');
@@ -80,8 +92,7 @@ class KbnController extends CI_Controller {
 				'latitude'	    => $this->input->post('latitude'),
 				'longitude'	    => $this->input->post('longitude'),
 				'deskripsi'		=> $this->input->post('deskripsi'),
-				'tgl_mulai'	    => $this->input->post('tgl_mulai'),
-				'tgl_selesai'	=> $this->input->post('tgl_selesai'),
+				'tgl_peresmian' => $this->input->post('tgl_peresmian'),
                 'is_active'     => 1,
                 'created_date'  => date('Y-m-d H:i:s'),
                 'created_by'    => $this->session->userdata('id_user'),
@@ -96,20 +107,21 @@ class KbnController extends CI_Controller {
             }
 
 			if ($this->kbn->create($data)) {
-				$this->session->set_flashdata('success', 'Data anda berhasil disimpan');
 				echo json_encode([['status' => 1]]);
-			}
+			} else {
+                print_json_error("failure");
+            }
 		}
 	}
 
 	public function update(){
-		if (!policy('KBN','update')) show_404();
+		if (!policy('KBN','update')) print_json_error("not-authorized");
 
         $this->form_validation->set_rules('id_satker', 'Satuan Kerja', 'trim|integer|required');
 		$this->form_validation->set_rules('klaster', 'Klaster', 'trim|required');
 		$this->form_validation->set_rules('nama', 'Nama KBN', 'trim|required');
-		$this->form_validation->set_rules('nama_tertua_desa', 'Nama Pembina', 'trim|required');
-		$this->form_validation->set_rules('nama_ketua_pelaksana', 'Nama Tertua Desa', 'trim|required');
+		$this->form_validation->set_rules('nama_tertua_desa', 'Nama Tertua Desa', 'trim');
+		$this->form_validation->set_rules('nama_ketua_pelaksana', 'Nama Ketua Pelaksana', 'trim|required');
 		$this->form_validation->set_rules('id_kelurahan', 'Desa/Kelurahan', 'trim|integer|required');
 		$this->form_validation->set_rules('latitude', 'Lintang', 'trim|required');
 		$this->form_validation->set_rules('longitude', 'Bujur', 'trim|required');
@@ -140,8 +152,7 @@ class KbnController extends CI_Controller {
 				'latitude'	    => $this->input->post('latitude'),
 				'longitude'	    => $this->input->post('longitude'),
 				'deskripsi'		=> $this->input->post('deskripsi'),
-				'tgl_mulai'	    => $this->input->post('tgl_mulai'),
-				'tgl_selesai'	=> $this->input->post('tgl_selesai'),
+				'tgl_peresmian'	=> $this->input->post('tgl_peresmian'),
                 'updated_date'  => date('Y-m-d H:i:s'),
                 'updated_by'    => $this->session->userdata('id_user'),
 			);
@@ -157,24 +168,23 @@ class KbnController extends CI_Controller {
 			$id = $this->input->post('id_kbn');
 
 			if ($this->kbn->update($id,$data)) {
-				$this->session->set_flashdata('success', 'Data anda berhasil disimpan');
 				echo json_encode([['status' => 1]]);
-			}
+			} else {
+                print_json_error("failure");
+            }
 		}
 	}
 
 	public function delete($id=null)
     {
-		if (!policy('KBN','delete')) show_404();
+		if (!policy('KBN','delete'))  print_json_error("not-authorized");
 
-		if (!isset($id)) show_404();
+		if (!isset($id)) print_json_error("invalid-id");
 
 		if ($this->kbn->delete($id)) {
-			$this->session->set_flashdata('success', 'Data berhasil dihapus');
-			redirect_back();
+			echo json_encode([['status' => 1]]);
 		} else {
-			$this->session->set_flashdata('error', 'Tidak dapat menghapus data');
-			redirect_back();
+			print_json_error("failure");
 		}
     }
 
@@ -252,28 +262,117 @@ class KbnController extends CI_Controller {
             $activities = array();
         }
 
+        foreach ($activities as $actv) {
+            if ($actv->id_activity_sosial) {
+                $actv->id_activity_sosial = encrypt($actv->id_activity_sosial);
+            }
+        }
+
 		echo json_encode($activities);
 	}
 
-	public function getKbnActivityBySatker($idsatker)
+	public function getKbnActivityBySatker($klaster, $idsatker)
 	{
 		$result = $this->kbn->getReportBySatker($klaster, $idsatker);
 		
 		echo json_encode($result);
 	}
 
-	public function getKbnActivityByPersonel($iduser)
+	public function getKbnActivityByPersonel($klaster, $iduser)
 	{
 		$result = $this->kbn->getReportByPersonel($klaster, $iduser);
 		
 		echo json_encode($result);
 	}   
 
-	public function getKbnActivityByKbn($idkbn)
+	public function getKbnActivityByKbn($klaster, $idkbn)
 	{
 		$result = $this->kbn->getReportByKbn($klaster, $idkbn);
 		
 		echo json_encode($result);
 	}    
     
+    public function profil($idkbn) {
+        $this->data['kbn'] = null;
+        if (policy('KBN','read') || policy('KBN','read_all')) {
+			$this->data['kbn'] = $this->kbn->find($idkbn);
+		}
+        
+        $this->data['title'] = 'Kampung Bahari Nusantara';
+        if (!empty($this->data['kbn'])) {
+            $this->data['title'] = $this->data['kbn']->nama ." - ". $this->data['title'];
+        }
+        		
+        $data['isi'] = $this->load->view('kbn/profil', $this->data, true);
+		$this->load->view('skin/layout', $data);
+
+    }
+
+	public function getSDA($sda, $idkbn)
+	{
+        $result = null;
+        if ($sda == 'pantai') {
+            $result = $this->kbn->getSDAPantai($idkbn);
+        }
+        else if ($sda == 'hutan') {
+            $result = $this->kbn->getSDAHutan($idkbn);
+        }
+        else if ($sda == 'gunung') {
+            $result = $this->kbn->getSDAGunung($idkbn);
+        }
+        else if ($sda == 'kerawanan') {
+            $result = $this->kbn->getSDAKerawanan($idkbn);
+        }
+        else if ($sda == 'hujan') {
+            $result = $this->kbn->getSDAHujan($idkbn);           
+        }
+        else if ($sda == 'tanah') {
+            $result = $this->kbn->getSDATanah($idkbn);
+        }
+        else if ($sda == 'sumberair') {
+            $result = $this->kbn->getSDASumberAir($idkbn);
+        }
+        else if ($sda == 'sungai') {
+            $result = $this->kbn->getSDASungai($idkbn);
+        }
+        else if ($sda == 'pulauterluar') {
+            $result = $this->kbn->getSDAPulauTerluar($idkbn);
+        }
+        else if ($sda == 'mangrove') {
+            $result = $this->kbn->getSDAMangrove($idkbn);
+        }
+
+		echo json_encode($result);
+	}    
+
+	public function getSDAB($sdab, $idkbn)
+	{
+        $result = null;
+        if ($sdab == 'perkebunan') {
+            $result = $this->kbn->getSDABPerkebunan($idkbn);
+        }
+        else if ($sdab == 'pertanian') {
+            $result = $this->kbn->getSDABPertanian($idkbn);
+        }
+        else if ($sdab == 'peternakan') {
+            $result = $this->kbn->getSDABPeternakan($idkbn);
+        }
+        else if ($sdab == 'pertambangan') {
+            $result = $this->kbn->getSDABPertambangan($idkbn);
+        }
+        else if ($sdab == 'budidayaikan') {
+            $result = $this->kbn->getSDABBudidayaIkan($idkbn);
+        }
+        else if ($sdab == 'kerambajaring') {
+            $result = $this->kbn->getSDABKerambaJaring($idkbn);
+        }
+        else if ($sdab == 'konservasi') {
+            $result = $this->kbn->getSDABKonservasi($idkbn);
+        }
+        else if ($sdab == 'sumberlistrik') {
+            $result = $this->kbn->getSDABSumberListrik($idkbn);
+        }
+        
+		echo json_encode($result);
+	}    
 }

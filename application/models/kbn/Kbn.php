@@ -43,6 +43,7 @@ class Kbn extends CI_Model
 
         $this->db->order_by("a.id_satker, a.id_kbn");
 
+        //echo $this->db->get_compiled_select(); exit;
 		$query = $this->db->get();
 			
 		return $query->result();
@@ -110,7 +111,7 @@ class Kbn extends CI_Model
         }
 
         if ($filters != null) {
-            if ($filters['startDate'] && $filters['finishDate']) {
+            if (!empty($filters['startDate']) && !empty($filters['finishDate'])) {
                 $this->db->where("date_format(A.when, '%Y-%m-%d') BETWEEN '" .$filters['startDate']. "' AND '" .$filters['finishDate']. "'", null, false);
                 unset ($filters['startDate']);
                 unset ($filters['finishDate']);
@@ -305,5 +306,96 @@ class Kbn extends CI_Model
 				return "";
 			}
 	}
+
+    public function getSDAPantai($idkbn) {
+        $sda = 'select a.* from geo_pantai a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDAHutan($idkbn) {
+        $sda = 'select a.* from geo_hutan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDAGunung($idkbn) {
+        $sda = 'select a.* from geo_gunung a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDAKerawanan($idkbn) {
+        $sda = 'select a.* from geo_kerawanan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDAHujan($idkbn) {
+        $sda = 'select a.* from geo_curah_hujan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDATanah($idkbn) {
+        $sda = 'select a.* from geo_struktur_tanah a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDASumberAir($idkbn) {
+        $sda = 'select a.* from geo_sumber_air a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDASungai($idkbn) {
+        $sda = 'select a.* from geo_sungai a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDAPulauTerluar($idkbn) {
+        $sda = 'select a.* from geo_pulau_terluar a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDAMangrove($idkbn) {
+        $sda = 'select a.* from rekap_mangrove a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABPerkebunan($idkbn) {
+        $sda = 'select a.* from geo_perkebunan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABPertanian($idkbn) {
+        $sda = 'select a.* from geo_pertanian a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABPeternakan($idkbn) {
+        $sda = 'select a.* from geo_peternakan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABPertambangan($idkbn) {
+        $sda = 'select a.* from geo_pertambangan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABBudidayaIkan($idkbn) {
+        $sda = 'select a.* from geo_budidaya_ikan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABKerambaJaring($idkbn) {
+        $sda = 'select a.* from geo_keramba_jaring a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABKonservasi($idkbn) {
+        $sda = 'select a.* from geo_konservasi_lingkungan a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
+    public function getSDABSumberListrik($idkbn) {
+        $sda = 'select a.* from geo_listrik a join rekap_kbn b on b.id_geografi=a.id_geografi and b.is_active=1 where a.is_active=1 and b.id_kbn=?';
+        return $this->db->query($sda, array($idkbn))->result_array();
+    }
+
 }
 

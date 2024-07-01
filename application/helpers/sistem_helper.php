@@ -144,3 +144,86 @@ function terbilang($nilai)
 function def_number_format($input, $decimal_point = 2){
     return number_format(($input ? $input : 0), $decimal_point,",",".");
 }
+
+function print_json_error($error_msg) {
+    $ci = &get_instance();
+    $json = ['status' => 0, 'error' => $error_msg, 'csrf' => $ci->security->get_csrf_hash()];
+    echo json_encode($json, JSON_INVALID_UTF8_IGNORE);
+    exit;
+}
+
+function get_geocode($alamat) {
+
+    $alamat = str_replace(' ','+',$alamat);
+    $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.urlencode($alamat).'&sensor=false&key='.GOOGLEMAP_KEY);
+
+    $output= json_decode($geocode);
+    $latitude = $output->results[0]->geometry->location->lat;
+    $longitude = $output->results[0]->geometry->location->lng;
+    $kelurahan = $output->results[0]->address_components[0]->long_name;
+    $kecamatan = $output->results[0]->address_components[1]->long_name;
+    $kabupaten = $output->results[0]->address_components[2]->long_name;
+    if (strpos($kabupaten, "Regency", 0) != FALSE) {
+        $kabupaten = "Kab. " .trim(str_replace("Regency", "", $kabupaten));
+    }
+    else if (strpos($kabupaten, "City", 0) != FALSE) {
+        $kabupaten = "Kota " .trim(str_replace("City", "", $kabupaten));
+    }
+    
+    $id_geografi_kelurahan = 0;
+    $id_geografi_kecamatan = 0;
+    $id_geografi_kabupaten = 0;
+
+    $sql = "select id_geografi from org_geografi where is_active=1 and level_geografi=2 and nama=" .$this->db->escape($kabupaten);
+    $res = $this->db->query($sql)->row_array();
+    if ($res != null) {
+        $id_geografi_kabupaten = $res['id_geografi'];
+    }
+
+    $sql = "select id_geografi from org_geografi where is_active=1 and level_geografi=3 and nama=" .$this->db->escape($kecamatan). " and id_geografi_parent=" .$id_geografi_kabupaten;
+    $res = $this->db->query($sql)->row_array();
+    if ($res != null) {
+        $id_geografi_kecamatan = $res['id_geografi'];
+    }
+
+    $sql = "select id_geografi from org_geografi where is_active=1 and level_geografi=4 and nama=" .$this->db->escape($kelurahan). " and id_geografi_parent=" .$id_geografi_kecamatan;
+    $res = $this->db->query($sql)->row_array();
+    if ($res != null) {
+        $id_geografi_kelurahan = $res['id_geografi'];
+    }
+   
+    $data = array (
+        "latitude" => $latitude,
+        "longitude" => $longitude,
+        "kelurahan" => $kelurahan,
+        "kecamatan" => $kecamatan,
+        "kabupaten" => $kabupaten,
+        "id_geografi" => $id_geografi_kelurahan,
+        "id_geografi_kecamatan" => $id_geografi_kecamatan,
+        "id_geografi_kabupaten" => $id_geografi_kabupaten
+    );
+
+    return $data;
+
+    // $httpClient = new \GuzzleHttp\Client(['verify' => false ]);
+    // $provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient, null, GOOGLEMAP_KEY);
+    // $geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
+
+    // $result = $geocoder->geocodeQuery(GeocodeQuery::create($alamat));
+    // $location = $result->get(0);
+    // $adminlevels = $location->getAdminLevels();
+    // $provinsi = $adminlevels->get(1)->getName();
+    // $kabupaten = $adminlevels->get(2)->getName();
+    // if (strpos($kabupaten, "Regency", 0) != FALSE) {
+    //     $kabupaten = "Kab. " .trim(str_replace("Regency", "", $kabupaten));
+    // }
+    // else if (strpos($kabupaten, "City", 0) != FALSE) {
+    //     $kabupaten = "Kota " .trim(str_replace("City", "", $kabupaten));
+    // }
+    // $kecamatan = $adminlevels->get(3)->getName();
+    // $kelurahan = $adminlevels->get(4)->getName();
+    // echo "$provinsi, $kabupaten, $kecamatan, $kelurahan"; exit;
+
+}
+
+

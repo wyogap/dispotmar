@@ -16,11 +16,11 @@ class SakaBahariController extends CI_Controller {
 	{
 		$this->data['title'] = 'Rekap - Saka Bahari';
 
-		if (policy('SAKA','read')) {
-			$this->data['dataBahari'] = $this->bahari->get($this->session->userdata('id_satker'));
-		}else if (policy('SAKA','read_all')){
-			$this->data['dataBahari'] = $this->bahari->get();
-		}
+		// if (policy('SAKA','read')) {
+		// 	$this->data['dataBahari'] = $this->bahari->get($this->session->userdata('id_satker'));
+		// }else if (policy('SAKA','read_all')){
+		// 	$this->data['dataBahari'] = $this->bahari->get();
+		// }
 
 		$this->data['satkers'] = $this->satker->get();
 		$this->data['provinsi'] = $this->geo->getLevel(1);
@@ -29,16 +29,27 @@ class SakaBahariController extends CI_Controller {
 		$this->load->view('skin/layout', $data);
 	}
 
+    public function rekap() {
+        $json['status'] = 1;
+		if (policy('SAKA','read')) {
+			$json['data'] = $this->bahari->get($this->session->userdata('id_satker'));
+		}else if (policy('SAKA','read_all')){
+			$json['data'] = $this->bahari->get();
+		}
+
+		echo json_encode($json);
+    }
+
 	public function show($id)
 	{
-		if (!policy('SAKA','update')) show_404();
+		if (!policy('SAKA','update')) print_json_error("not-authorized");
 
 		$this->data['bahari'] = $this->bahari->find($id);
 		echo json_encode($this->data);
 	}
 
 	public function store(){
-		if (!policy('SAKA','create')) show_404();
+		if (!policy('SAKA','create')) print_json_error("not-authorized");
 
 		$this->form_validation->set_rules('id_satker', 'Satuan Kerja', 'trim|integer|required');
 		$this->form_validation->set_rules('nama', 'Nama Saka Bahari', 'trim|required');
@@ -115,14 +126,15 @@ class SakaBahariController extends CI_Controller {
             }
 
 			if ($this->bahari->create($data)) {
-				$this->session->set_flashdata('success', 'Data anda berhasil disimpan');
 				echo json_encode([['status' => 1]]);
-			}
+			} else {
+                print_json_error("failure");;
+            }
 		}
 	}
 
 	public function update(){
-		if (!policy('SAKA','update')) show_404();
+		if (!policy('SAKA','update')) print_json_error("not-authorized");
 
 		$this->form_validation->set_rules('id_satker', 'Satuan Kerja', 'trim|integer|required');
 		$this->form_validation->set_rules('nama', 'Nama Saka Bahari', 'trim|required');
@@ -196,24 +208,23 @@ class SakaBahariController extends CI_Controller {
 			$id = $this->input->post('id_sakabahari');
 
 			if ($this->bahari->update($id,$data)) {
-				$this->session->set_flashdata('success', 'Data anda berhasil disimpan');
 				echo json_encode([['status' => 1]]);
-			}
+			} else {
+                print_json_error("failure");;
+            }
 		}
 	}
 
 	public function delete($id=null)
     {
-		if (!policy('SAKA','delete')) show_404();
+		if (!policy('SAKA','delete')) print_json_error("not-authorized");
 
-		if (!isset($id)) show_404();
+		if (!isset($id))  print_json_error("invalid-id");
 
 		if ($this->bahari->delete($id)) {
-			$this->session->set_flashdata('success', 'Data berhasil dihapus');
-			redirect_back();
+			echo json_encode([['status' => 1]]);
 		} else {
-			$this->session->set_flashdata('error', 'Tidak dapat menghapus data');
-			redirect_back();
+			print_json_error("failure");;
 		}
     }
 
@@ -284,7 +295,17 @@ class SakaBahariController extends CI_Controller {
 			// $activities = $this->report->getDataPagination(null,10,$offset);
 			$activities = $this->bahari->getReport(null,10,$offset);
 		}
-		
+
+        if ($activities == null) {
+            $activities = array();
+        }
+
+        foreach ($activities as $actv) {
+            if ($actv->id_activity_sosial) {
+                $actv->id_activity_sosial = encrypt($actv->id_activity_sosial);
+            }
+        }
+                
 		echo json_encode($activities);
 	}
 
@@ -308,4 +329,145 @@ class SakaBahariController extends CI_Controller {
 		
 		echo json_encode($result);
 	}    
+
+    public function profil($idsaka) {
+        $this->data['bahari'] = null;
+        if (policy('SAKA','read') || policy('SAKA','read_all')) {
+			$this->data['bahari'] = $this->bahari->find($idsaka);
+		}
+        
+        $this->data['title'] = 'Saka Bahari';
+        if (!empty($this->data['bahari'])) {
+            $this->data['title'] = $this->data['bahari']->nama ." - ". $this->data['title'];
+        }
+        
+        $this->data['anggota'] = $this->bahari->daftaranggota($idsaka);
+
+		$data['isi'] = $this->load->view('sakabahari/profil', $this->data, true);
+		$this->load->view('skin/layout', $data);
+
+    }
+
+    public function daftaranggota($idsaka) {
+        $json['status'] = 1;
+        $json['data'] = $this->bahari->daftaranggota($idsaka);
+
+        //print_json_output($json['data']);
+		echo json_encode($json);
+    }
+
+    public function show_anggota($id)
+	{
+		if (!policy('SAKA','read') && !policy('SAKA','read_all')) print_json_error("not-authorized");
+
+		$this->data['anggota'] = $this->bahari->find_anggota($id);
+		echo json_encode($this->data);
+	}
+
+	public function store_anggota(){
+		if (!policy('SAKA','update')) print_json_error("not-authorized");
+
+		$this->form_validation->set_rules('nama', 'Nama Anggota', 'trim|required');
+		$this->form_validation->set_rules('tgl_lahir', 'Tanggal Lahir', 'trim|required');
+		$this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'trim|required');
+
+		if ($this->form_validation->run() == FALSE) {
+			$status = ['status' => 0, 'csrf' => $this->security->get_csrf_hash()];
+			$response = [
+				'nama' 			    => form_error('nama'),
+				'tgl_lahir' 		=> form_error('tgl_lahir'),
+				'jenis_kelamin' 	=> form_error('jenis_kelamin'),
+			];
+			echo json_encode([$status,$response]);
+		}else{
+			$data = array(
+				'nama'	        => $this->input->post('nama'),
+				'tgl_lahir'	    => $this->input->post('tgl_lahir'),
+				'jenis_kelamin'	=> $this->input->post('jenis_kelamin'),
+				'no_hp'	        => $this->input->post('no_hp'),
+				'email'	        => $this->input->post('email'),
+				'alamat'	    => $this->input->post('alamat'),
+				'is_active'		=> TRUE,
+				'created_by'	=> $this->session->userdata('id_user'),
+				'created_date'	=> date('Y-m-d H:i:s')
+			);
+
+            $data['id_sakabahari'] = $this->input->post('id_sakabahari');
+
+            //insert gambar-sampul kalau perlu
+            if (!empty($_FILES['foto'])) {
+                $gambar = $this->bahari->do_upload('foto');
+                if (!empty($gambar)) {
+                    $data['foto'] = $gambar;
+                }
+            }
+
+			if ($this->bahari->create_anggota($data)) {
+				echo json_encode([['status' => 1]]);
+			}
+            else {
+                print_json_error("failure");
+            }
+		}
+	}
+
+	public function update_anggota(){
+		if (!policy('SAKA','update')) print_json_error("not-authorized");
+
+		$this->form_validation->set_rules('nama', 'Nama Anggota', 'trim|required');
+		$this->form_validation->set_rules('tgl_lahir', 'Tanggal Lahir', 'trim|required');
+		$this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'trim|required');
+		
+		if ($this->form_validation->run() == FALSE) {
+			$status = ['status' => 0, 'csrf' => $this->security->get_csrf_hash()];
+			$response = [
+				'nama' 			    => form_error('nama'),
+				'tgl_lahir' 		=> form_error('tgl_lahir'),
+				'jenis_kelamin' 	=> form_error('jenis_kelamin'),
+			];
+			echo json_encode([$status,$response]);
+		}else{
+			$data = array(
+				'nama'	        => $this->input->post('nama'),
+				'tgl_lahir'	    => $this->input->post('tgl_lahir'),
+				'jenis_kelamin'	=> $this->input->post('jenis_kelamin'),
+				'no_hp'	        => $this->input->post('no_hp'),
+				'email'	        => $this->input->post('email'),
+				'alamat'	    => $this->input->post('alamat'),
+				'is_active'		=> TRUE,
+				'created_by'	=> $this->session->userdata('id_user'),
+				'created_date'	=> date('Y-m-d H:i:s')
+			);
+
+            //insert gambar-sampul kalau perlu
+            if (!empty($_FILES['foto'])) {
+                $gambar = $this->bahari->do_upload('foto');
+                if (!empty($gambar)) {
+                    $data['foto'] = $gambar;
+                }
+            }
+
+			$id = $this->input->post('id_anggota');
+
+			if ($this->bahari->update_anggota($id,$data)) {
+				echo json_encode([['status' => 1]]);
+			}
+            else {
+                print_json_error("failure");
+            }
+		}
+	}
+
+	public function delete_anggota($id=null)
+    {
+		if (!policy('SAKA','update')) print_json_error("not-authorized");
+
+		if (!isset($id)) print_json_error("invalid-id");
+
+		if ($this->bahari->delete_anggota($id)) {
+			echo json_encode([['status' => 1]]);;
+		} else {
+			print_json_error("failure");;
+		}
+    }
 }

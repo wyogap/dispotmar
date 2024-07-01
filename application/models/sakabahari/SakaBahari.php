@@ -177,7 +177,7 @@ class SakaBahari extends CI_Model
         }
 
         if ($filters != null) {
-            if ($filters['startDate'] && $filters['finishDate']) {
+            if (!empty($filters['startDate']) && !empty($filters['finishDate'])) {
                 $this->db->where("date_format(A.when, '%Y-%m-%d') BETWEEN '" .$filters['startDate']. "' AND '" .$filters['finishDate']. "'", null, false);
                 unset ($filters['startDate']);
                 unset ($filters['finishDate']);
@@ -218,7 +218,42 @@ class SakaBahari extends CI_Model
 
         return $this->getReport(null, 0, 1, $filters);
     } 
+
     
+    public function daftaranggota($idsaka) {
+        $sql = "select a.* from rekap_sakabahari_anggota a where a.is_active=1 and a.id_sakabahari=?";
+
+        return $this->db->query($sql, array($idsaka))->result_array();
+    } 
+ 
+    public function find_anggota($id)
+    {
+        $sql = "select a.* from rekap_sakabahari_anggota a where a.is_active=1 and a.id_anggota=?";
+
+		$result = $this->db->query($sql, array($id))->result();
+        if ($result == null)    return null;
+
+        return $result[0];
+    }
+ 	
+    public function create_anggota($data)
+    {		
+        $result = $this->db->insert("rekap_sakabahari_anggota", $data);
+        if ($result == null)    return 0;
+
+        return $this->db->insert_id();
+    }
+
+    public function update_anggota($id,$data)
+    {
+        return $this->db->update("rekap_sakabahari_anggota", $data, ["id_anggota" => $id]);
+    }
+
+    public function delete_anggota($id)
+    {
+        return $this->db->update("rekap_sakabahari_anggota", ['is_active' => 0], ["id_anggota" => $id]);
+    }
+   
     public function do_upload($field)
 	{
         $config['upload_path']          = './uploads/reports/';

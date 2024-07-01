@@ -7,10 +7,6 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
-require_once APPPATH."vendor/psr/log/Psr/Log/LoggerAwareTrait.php";
-require_once APPPATH."vendor/psr/log/Psr/Log/LoggerAwareInterface.php";
-require_once APPPATH."vendor/psr/log/Psr/Log/LogLevel.php";
-require_once APPPATH."vendor/pusher/pusher-php-server/src/PusherCrypto.php";
 class Pusher implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -18,7 +14,7 @@ class Pusher implements LoggerAwareInterface
     /**
      * @var string Version
      */
-    public static $VERSION = '4.1.4';
+    public static $VERSION = '4.1.5';
 
     /**
      * @var null|PusherCrypto
@@ -236,7 +232,7 @@ class Pusher implements LoggerAwareInterface
             $replacement['{'.$k.'}'] = $v;
         }
 
-        // $this->logger->log(strtr($msg, $replacement));
+        $this->logger->log(strtr($msg, $replacement));
     }
 
     /**
@@ -864,12 +860,12 @@ class Pusher implements LoggerAwareInterface
                     $decryptedEvent = $this->crypto->decrypt_event($event);
 
                     if ($decryptedEvent == false) {
-                        $this->log('Unable to decrypt webhook event payload. Wrong key? Ignoring.', [], LogLevel::WARNING);
+                        $this->log('Unable to decrypt webhook event payload. Wrong key? Ignoring.', null, LogLevel::WARNING);
                         continue;
                     }
                     array_push($decoded_events, $decryptedEvent);
                 } else {
-                    $this->log('Got an encrypted webhook event payload, but no master key specified. Ignoring.', [], LogLevel::WARNING);
+                    $this->log('Got an encrypted webhook event payload, but no master key specified. Ignoring.', null, LogLevel::WARNING);
                     continue;
                 }
             } else {
